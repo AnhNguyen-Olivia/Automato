@@ -54,6 +54,12 @@ cp -r /PATH/TO/Unity-Robotics-Hub/tutorials/ros_unity_integration/ros2_packages/
 cp -r /PATH/TO/Unity-Robotics-Hub/tutorials/ros_unity_integration/ros2_packages/unity_robotics_demo_msgs .
 ```
 
+Example
+```
+cp -r /home/olivia/Unity-Robotics-Hub/tutorials/ros_unity_integration/ros2_packages/unity_robotics_demo .
+cp -r /home/olivia/Unity-Robotics-Hub/tutorials/ros_unity_integration/ros2_packages/unity_robotics_demo_msgs .
+```
+
 Your `src` folder should now contain three packages: `ROS-TCP-Endpoint`, `unity_robotics_demo`, `unity_robotics_demo_msgs`.
 
 **Build (note: you source twice, on purpose):**
