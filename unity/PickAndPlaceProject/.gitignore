@@ -1,0 +1,68 @@
+# ==========================================
+# Unity generated files
+# ==========================================
+
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Ll]ogs/
+[Uu]ser[Ss]ettings/
+[Mm]emoryCaptures/
+
+# Unity build output
+[Bb]uild/
+[Bb]uilds/
+
+# ==========================================
+# IDE generated files
+# ==========================================
+
+.vs/
+.vscode/
+.idea/
+.gradle/
+
+*.csproj
+*.sln
+*.suo
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+
+# ==========================================
+# Operating system files
+# ==========================================
+
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# ==========================================
+# Python generated files
+# ==========================================
+
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.venv/
+venv/
+
+# ==========================================
+# ROS / Catkin generated files
+# ==========================================
+
+build/
+devel/
+install/
+logs/
+
+# ==========================================
+# Temporary files
+# ==========================================
+
+*.tmp
+*.bak
+*.swp
+*~
