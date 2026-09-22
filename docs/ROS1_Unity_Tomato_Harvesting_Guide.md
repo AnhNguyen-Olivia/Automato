@@ -1,5 +1,6 @@
 # Robotic Arm: Tomato Detection, Localization & Harvesting
-### A ROS 1 + Unity (Windows) Simulation — Beginner-Friendly Build Guide
+
+A ROS 1 + Unity (Windows) Simulation — Beginner-Friendly Build Guide
 
 ---
 
