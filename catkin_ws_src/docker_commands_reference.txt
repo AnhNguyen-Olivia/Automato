@@ -1,0 +1,8 @@
+   11  docker run -it --rm -p 10000:10000 unity-robotics:pick-and-place /bin/bash
+   23  docker exec -it ur10e_dev bash
+   33  docker exec -it ur10e_dev bash
+   36  docker exec -e DISPLAY=$DISPLAY -it ur10e_dev bash -c "xeyes"
+   47  docker exec -it ur10e_dev_gui bash
+   56  docker commit ur10e_dev_gui ur10e_dev_gui_snapshot2
+  158  docker commit ur10e_dev_gui ur10e_dev_gui_snapshot2
+  178  history | grep docker >> /catkin_ws/src/docker_commands_reference.txt

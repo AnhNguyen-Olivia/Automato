@@ -1,0 +1,5 @@
+DECISION: Moving to dual-boot Ubuntu 20.04 + ROS Noetic (not 18.04/Melodic).
+Reason: 18.04 caused MoveIt Setup Assistant crash (exit -11) under software rendering (llvmpipe).
+onrobot_rg_description package.xml checked: no distro pinning, minimal deps (catkin, urdf) - looks portable to Noetic.
+universal_robot: need to switch to noetic-devel branch (currently on melodic-devel-staging).
+Not yet verified: actual catkin build success on Noetic - test this first thing after install.
