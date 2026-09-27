@@ -249,14 +249,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9521638}
-  m_LocalRotation: {x: -0.011619859, y: 0.96228653, z: -0.26986423, w: -0.032294206}
-  m_LocalPosition: {x: 0.207, y: 1.633, z: 2.616}
+  m_LocalRotation: {x: -0.00936922, y: 0.9619838, z: -0.2699518, w: -0.040317014}
+  m_LocalPosition: {x: 0.141, y: 1.633, z: 2.62}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 31.341, y: -536.249, z: -0.331}
+  m_LocalEulerAnglesHint: {x: 31.341, y: -535.13, z: 0.251}
 --- !u!4 &29885897 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6674843462388330703, guid: d2501757c0c8f2a4eb35805ab093ecf7, type: 3}
@@ -1532,6 +1532,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   geometryType: 3
+--- !u!4 &463806580 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 5113255398182140587, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
+  m_PrefabInstance: {fileID: 1605487734}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &474388930 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5940696595943291060, guid: 4a976128efd9dfd43b2891abc6eccc48, type: 3}
@@ -4012,6 +4017,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e797bdd38f6d6f547b530b0740fafbc2, type: 3}
+--- !u!4 &1006382759 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 850690186460591411, guid: 43bef545df3e344c4a7e089ca90c15a0, type: 3}
+  m_PrefabInstance: {fileID: 1494732579}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1017529389
 GameObject:
   m_ObjectHideFlags: 0
@@ -4097,8 +4107,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1707442772}
-        m_TargetAssemblyTypeName: TrajectoryPlanner, Unity.Robotics.PickAndPlace
-        m_MethodName: PublishJoints
+        m_TargetAssemblyTypeName: HarvestPoseClient, Unity.Robotics.PickAndPlace
+        m_MethodName: OnHarvestButtonClicked
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -6080,6 +6090,60 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   geometryType: 3
+--- !u!1 &1417173943
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1417173945}
+  - component: {fileID: 1417173944}
+  m_Layer: 0
+  m_Name: RosConnector
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1417173944
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1417173943}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7acef0b79454c9b4dae3f8139bc4ba77, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_RosIPAddress: 127.0.0.1
+  m_RosPort: 10000
+  m_ConnectOnStart: 1
+  m_KeepaliveTime: 1
+  m_NetworkTimeoutSeconds: 2
+  m_SleepTimeSeconds: 0.01
+  m_ShowHUD: 1
+  m_TFTopics:
+  - /tf
+  listenForTFMessages: 1
+--- !u!4 &1417173945
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1417173943}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.20699978, y: 1.6330001, z: 2.6160002}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 9
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!4 &1426891605 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 8966603765147346094, guid: ade5f0e89fdc05e4b9f005a4a228ae9c, type: 3}
@@ -6341,11 +6405,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 43bef545df3e344c4a7e089ca90c15a0, type: 3}
---- !u!1 &1494732580 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 850690186460591414, guid: 43bef545df3e344c4a7e089ca90c15a0, type: 3}
-  m_PrefabInstance: {fileID: 1494732579}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1521505814
 GameObject:
   m_ObjectHideFlags: 8
@@ -7125,11 +7184,6 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
---- !u!1 &1605487735 stripped
-GameObject:
-  m_CorrespondingSourceObject: {fileID: 5601983281253769233, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
-  m_PrefabInstance: {fileID: 1605487734}
-  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1637021833 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 581784719414696081, guid: f7f7616473d9be54189e781d0e965967, type: 3}
@@ -7241,7 +7295,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1707442771}
-  - component: {fileID: 1707442770}
   - component: {fileID: 1707442772}
   m_Layer: 0
   m_Name: Publisher
@@ -7250,22 +7303,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1707442770
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1707442769}
-  m_Enabled: 0
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 966bafbbcdf4fc941aa54598c3991030, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_TopicName: /niryo_joints
-  m_NiryoOne: {fileID: 0}
-  m_Target: {fileID: 1605487735}
-  m_TargetPlacement: {fileID: 1494732580}
 --- !u!4 &1707442771
 Transform:
   m_ObjectHideFlags: 0
@@ -7288,15 +7325,21 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1707442769}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: abde1cf8576c0de4982391f342e3a8a7, type: 3}
+  m_Script: {fileID: 11500000, guid: 09d59ae78b15748fdb131fbe9b4074e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_RosServiceName: niryo_moveit
-  m_NiryoOne: {fileID: 0}
-  m_Target: {fileID: 1605487735}
-  m_TargetPlacement: {fileID: 1494732580}
+  tomatoTarget: {fileID: 463806580}
+  placementTarget: {fileID: 1006382759}
+  shoulderPan: {fileID: 0}
+  shoulderLift: {fileID: 0}
+  elbow: {fileID: 0}
+  wrist1: {fileID: 0}
+  wrist2: {fileID: 0}
+  wrist3: {fileID: 0}
+  gripperOpen: 0
+  gripperClosed: 0.6
 --- !u!1001 &1730299870
 PrefabInstance:
   m_ObjectHideFlags: 0
