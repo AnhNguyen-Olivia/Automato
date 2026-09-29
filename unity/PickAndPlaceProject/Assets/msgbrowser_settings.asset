@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: msgbrowser_settings
   m_EditorClassIdentifier: 
   inputPath: /mnt/e/Automato/catkin_ws_src/ur10e_rg2_moveit
-  relativeOutPath: Assets/RosMessages
+  relativeOutPath: RosMessages

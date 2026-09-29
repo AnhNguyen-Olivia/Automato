@@ -249,14 +249,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9521638}
-  m_LocalRotation: {x: -0.00936922, y: 0.9619838, z: -0.2699518, w: -0.040317014}
-  m_LocalPosition: {x: 0.141, y: 1.633, z: 2.62}
+  m_LocalRotation: {x: -0.14557621, y: -0.006180769, z: -0.016056914, w: -0.9891975}
+  m_LocalPosition: {x: -0.13, y: 1.92, z: -2.46}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 31.341, y: -535.13, z: 0.251}
+  m_LocalEulerAnglesHint: {x: 16.727, y: -358.989, z: 2.009}
 --- !u!4 &29885897 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6674843462388330703, guid: d2501757c0c8f2a4eb35805ab093ecf7, type: 3}
@@ -824,6 +824,37 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: bacba02ab3f896247aab8ff9bd0247e4, type: 2}
+--- !u!1 &222883941
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 222883942}
+  m_Layer: 0
+  m_Name: GripPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &222883942
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 222883941}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.0025, y: 0.1938, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1321174115}
+  m_RootOrder: 3
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &237235238
 GameObject:
   m_ObjectHideFlags: 8
@@ -1542,6 +1573,24 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 5940696595943291060, guid: 4a976128efd9dfd43b2891abc6eccc48, type: 3}
   m_PrefabInstance: {fileID: 1574948383}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &513996253 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3302142234816977626, guid: 85db2308098d34a79837fb7356902f62, type: 3}
+  m_PrefabInstance: {fileID: 896145948}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &513996259
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 513996253}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.2192004, y: 0.98425, z: 1.2192008}
+  m_Center: {x: 0, y: 0.49212494, z: 0}
 --- !u!1 &517371751
 GameObject:
   m_ObjectHideFlags: 0
@@ -3697,7 +3746,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2781043625631727712, guid: 85db2308098d34a79837fb7356902f62, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.593
+      value: -1.603
       objectReference: {fileID: 0}
     - target: {fileID: 2781043625631727712, guid: 85db2308098d34a79837fb7356902f62, type: 3}
       propertyPath: m_LocalPosition.z
@@ -5713,6 +5762,7 @@ Transform:
   - {fileID: 101277574}
   - {fileID: 1933760454}
   - {fileID: 679562357}
+  - {fileID: 222883942}
   m_Father: {fileID: 1172246087}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -6361,15 +6411,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 850690186460591411, guid: 43bef545df3e344c4a7e089ca90c15a0, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.612
+      value: -0.673
       objectReference: {fileID: 0}
     - target: {fileID: 850690186460591411, guid: 43bef545df3e344c4a7e089ca90c15a0, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.653
+      value: 0.664
       objectReference: {fileID: 0}
     - target: {fileID: 850690186460591411, guid: 43bef545df3e344c4a7e089ca90c15a0, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.913
+      value: 0.139
       objectReference: {fileID: 0}
     - target: {fileID: 850690186460591411, guid: 43bef545df3e344c4a7e089ca90c15a0, type: 3}
       propertyPath: m_LocalRotation.w
@@ -7140,7 +7190,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5113255398182140587, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.52
+      value: -0.68
       objectReference: {fileID: 0}
     - target: {fileID: 5113255398182140587, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
       propertyPath: m_LocalPosition.y
@@ -7148,7 +7198,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5113255398182140587, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.94
+      value: 0.899
       objectReference: {fileID: 0}
     - target: {fileID: 5113255398182140587, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
       propertyPath: m_LocalRotation.w
@@ -7296,6 +7346,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1707442771}
   - component: {fileID: 1707442772}
+  - component: {fileID: 1707442773}
   m_Layer: 0
   m_Name: Publisher
   m_TagString: Untagged
@@ -7332,14 +7383,61 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   tomatoTarget: {fileID: 463806580}
   placementTarget: {fileID: 1006382759}
-  shoulderPan: {fileID: 0}
-  shoulderLift: {fileID: 0}
-  elbow: {fileID: 0}
-  wrist1: {fileID: 0}
-  wrist2: {fileID: 0}
-  wrist3: {fileID: 0}
+  robotBase: {fileID: 1123158652}
+  sceneSync: {fileID: 0}
+  gripAttachPoint: {fileID: 222883942}
+  graspYawOffset: 0
+  approachHeight: 0.1
+  placeClearance: 0.005
+  surfaceRayHeight: 1
+  fingertipDrop: 0.02
+  verticalStepSize: 0.03
   gripperOpen: 0
   gripperClosed: 0.6
+  serviceTimeout: 15
+  trajectoryTimeScale: 1
+  armSettleTimeout: 6
+  settleToleranceDeg: 0.5
+  settleVelocity: 0.02
+  gripperSettleTime: 1
+  driveStiffness: 100000
+  driveDamping: 10000
+  driveForceLimit: 10000
+  gripperJoints:
+  - linkName: left_outer_knuckle
+    multiplier: 1
+  - linkName: left_inner_knuckle
+    multiplier: 1
+  - linkName: left_inner_finger
+    multiplier: -1
+  - linkName: right_outer_knuckle
+    multiplier: 1
+  - linkName: right_inner_knuckle
+    multiplier: 1
+  - linkName: right_inner_finger
+    multiplier: -1
+  gripperStiffness: 20000
+  gripperDamping: 2000
+  gripperForceLimit: 200
+--- !u!114 &1707442773
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1707442769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34844d1d2a05a7d1084faf4d38858d2e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  robotBase: {fileID: 1123158652}
+  frameId: base_link
+  topic: /collision_object
+  margin: 0.02
+  obstacles:
+  - {fileID: 513996259}
+  - {fileID: 513996259}
 --- !u!1001 &1730299870
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -15,17 +15,26 @@ namespace RosMessageTypes.Ur10eRg2Moveit
 
         public Geometry.PoseMsg target_pose;
         public double gripper_position;
+        public Geometry.PointMsg cube_position;
+        public bool attach_cube;
+        public bool detach_cube;
 
         public HarvestPoseRequest()
         {
             this.target_pose = new Geometry.PoseMsg();
             this.gripper_position = 0.0;
+            this.cube_position = new Geometry.PointMsg();
+            this.attach_cube = false;
+            this.detach_cube = false;
         }
 
-        public HarvestPoseRequest(Geometry.PoseMsg target_pose, double gripper_position)
+        public HarvestPoseRequest(Geometry.PoseMsg target_pose, double gripper_position, Geometry.PointMsg cube_position, bool attach_cube, bool detach_cube)
         {
             this.target_pose = target_pose;
             this.gripper_position = gripper_position;
+            this.cube_position = cube_position;
+            this.attach_cube = attach_cube;
+            this.detach_cube = detach_cube;
         }
 
         public static HarvestPoseRequest Deserialize(MessageDeserializer deserializer) => new HarvestPoseRequest(deserializer);
@@ -34,19 +43,28 @@ namespace RosMessageTypes.Ur10eRg2Moveit
         {
             this.target_pose = Geometry.PoseMsg.Deserialize(deserializer);
             deserializer.Read(out this.gripper_position);
+            this.cube_position = Geometry.PointMsg.Deserialize(deserializer);
+            deserializer.Read(out this.attach_cube);
+            deserializer.Read(out this.detach_cube);
         }
 
         public override void SerializeTo(MessageSerializer serializer)
         {
             serializer.Write(this.target_pose);
             serializer.Write(this.gripper_position);
+            serializer.Write(this.cube_position);
+            serializer.Write(this.attach_cube);
+            serializer.Write(this.detach_cube);
         }
 
         public override string ToString()
         {
             return "HarvestPoseRequest: " +
             "\ntarget_pose: " + target_pose.ToString() +
-            "\ngripper_position: " + gripper_position.ToString();
+            "\ngripper_position: " + gripper_position.ToString() +
+            "\ncube_position: " + cube_position.ToString() +
+            "\nattach_cube: " + attach_cube.ToString() +
+            "\ndetach_cube: " + detach_cube.ToString();
         }
 
 #if UNITY_EDITOR
