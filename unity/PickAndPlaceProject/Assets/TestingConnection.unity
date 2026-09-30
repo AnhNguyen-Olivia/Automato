@@ -249,14 +249,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 9521638}
-  m_LocalRotation: {x: -0.14557621, y: -0.006180769, z: -0.016056914, w: -0.9891975}
-  m_LocalPosition: {x: -0.13, y: 1.92, z: -2.46}
+  m_LocalRotation: {x: -0.14605366, y: 0.009988403, z: 0.00500359, w: -0.9892136}
+  m_LocalPosition: {x: -0.41, y: 1.74, z: -2.52}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 16.727, y: -358.989, z: 2.009}
+  m_LocalEulerAnglesHint: {x: 16.79, y: -361.27, z: -0.767}
 --- !u!4 &29885897 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 6674843462388330703, guid: d2501757c0c8f2a4eb35805ab093ecf7, type: 3}
@@ -847,14 +847,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 222883941}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.0025, y: 0.1938, z: 0}
+  m_LocalRotation: {x: -0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: -0.0008, y: 0.2022, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1321174115}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -90, y: 0, z: 0}
 --- !u!1 &237235238
 GameObject:
   m_ObjectHideFlags: 8
@@ -1587,7 +1587,7 @@ BoxCollider:
   m_GameObject: {fileID: 513996253}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Size: {x: 1.2192004, y: 0.98425, z: 1.2192008}
   m_Center: {x: 0, y: 0.49212494, z: 0}
@@ -2701,9 +2701,9 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -360
     upperLimit: 360
-    stiffness: 0
-    damping: 0
-    forceLimit: 56
+    stiffness: 100000
+    damping: 10000
+    forceLimit: 10000
     target: 0
     targetVelocity: 0
   m_YDrive:
@@ -2726,7 +2726,7 @@ ArticulationBody:
   m_AngularDamping: 0
   m_JointFriction: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &685166263
 MonoBehaviour:
@@ -2906,10 +2906,10 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -44.999992
     upperLimit: 44.999992
-    stiffness: 0
-    damping: 0
-    forceLimit: 1000
-    target: 0
+    stiffness: 20000
+    damping: 2000
+    forceLimit: 200
+    target: 34.37747
     targetVelocity: 0
   m_YDrive:
     lowerLimit: 0
@@ -3236,9 +3236,9 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -360
     upperLimit: 360
-    stiffness: 0
-    damping: 0
-    forceLimit: 330
+    stiffness: 100000
+    damping: 10000
+    forceLimit: 10000
     target: 0
     targetVelocity: 0
   m_YDrive:
@@ -3261,7 +3261,7 @@ ArticulationBody:
   m_AngularDamping: 0
   m_JointFriction: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &821911299
 MonoBehaviour:
@@ -3551,9 +3551,9 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -360
     upperLimit: 360
-    stiffness: 0
-    damping: 0
-    forceLimit: 56
+    stiffness: 100000
+    damping: 10000
+    forceLimit: 10000
     target: 0
     targetVelocity: 0
   m_YDrive:
@@ -3576,7 +3576,7 @@ ArticulationBody:
   m_AngularDamping: 0
   m_JointFriction: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &866513566
 MonoBehaviour:
@@ -3784,6 +3784,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Table
       objectReference: {fileID: 0}
+    - target: {fileID: 3302142234816977626, guid: 85db2308098d34a79837fb7356902f62, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 85db2308098d34a79837fb7356902f62, type: 3}
 --- !u!1 &919247750 stripped
@@ -3957,10 +3961,10 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -44.999992
     upperLimit: 44.999992
-    stiffness: 0
-    damping: 0
-    forceLimit: 1000
-    target: 0
+    stiffness: 20000
+    damping: 2000
+    forceLimit: 200
+    target: 34.37747
     targetVelocity: 0
   m_YDrive:
     lowerLimit: 0
@@ -5040,10 +5044,10 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -31.999979
     upperLimit: 44.999992
-    stiffness: 0
-    damping: 0
-    forceLimit: 1000
-    target: 0
+    stiffness: 20000
+    damping: 2000
+    forceLimit: 200
+    target: 34.37747
     targetVelocity: 0
   m_YDrive:
     lowerLimit: 0
@@ -6295,10 +6299,10 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -50.000023
     upperLimit: 50.000023
-    stiffness: 0
-    damping: 0
-    forceLimit: 1000
-    target: 0
+    stiffness: 20000
+    damping: 2000
+    forceLimit: 200
+    target: -34.37747
     targetVelocity: 0
   m_YDrive:
     lowerLimit: 0
@@ -6415,7 +6419,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 850690186460591411, guid: 43bef545df3e344c4a7e089ca90c15a0, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.664
+      value: 0.639
       objectReference: {fileID: 0}
     - target: {fileID: 850690186460591411, guid: 43bef545df3e344c4a7e089ca90c15a0, type: 3}
       propertyPath: m_LocalPosition.z
@@ -6838,10 +6842,10 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -44.999992
     upperLimit: 44.999992
-    stiffness: 0
-    damping: 0
-    forceLimit: 1000
-    target: 0
+    stiffness: 20000
+    damping: 2000
+    forceLimit: 200
+    target: 34.37747
     targetVelocity: 0
   m_YDrive:
     lowerLimit: 0
@@ -6878,6 +6882,37 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IsBaseLink: 0
+--- !u!1 &1563455435
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1563455436}
+  m_Layer: 0
+  m_Name: ArmController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1563455436
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1563455435}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 2.8059494, y: -1.5502555, z: -2.4115365}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 10
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1569897859
 GameObject:
   m_ObjectHideFlags: 8
@@ -7079,9 +7114,9 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -180
     upperLimit: 180
-    stiffness: 0
-    damping: 0
-    forceLimit: 150
+    stiffness: 100000
+    damping: 10000
+    forceLimit: 10000
     target: 0
     targetVelocity: 0
   m_YDrive:
@@ -7104,7 +7139,7 @@ ArticulationBody:
   m_AngularDamping: 0
   m_JointFriction: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1580966825
 MonoBehaviour:
@@ -7178,27 +7213,27 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 5113255398182140587, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
       propertyPath: m_LocalScale.x
-      value: 4.736712
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5113255398182140587, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
       propertyPath: m_LocalScale.y
-      value: 4.736712
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5113255398182140587, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
       propertyPath: m_LocalScale.z
-      value: 4.736712
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 5113255398182140587, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -0.68
+      value: -0.677
       objectReference: {fileID: 0}
     - target: {fileID: 5113255398182140587, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.684
+      value: 0.6504
       objectReference: {fileID: 0}
     - target: {fileID: 5113255398182140587, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.899
+      value: 0.747
       objectReference: {fileID: 0}
     - target: {fileID: 5113255398182140587, guid: 3901759e6233748538fffdbc519c1a68, type: 3}
       propertyPath: m_LocalRotation.w
@@ -7347,6 +7382,8 @@ GameObject:
   - component: {fileID: 1707442771}
   - component: {fileID: 1707442772}
   - component: {fileID: 1707442773}
+  - component: {fileID: 1707442775}
+  - component: {fileID: 1707442774}
   m_Layer: 0
   m_Name: Publisher
   m_TagString: Untagged
@@ -7381,44 +7418,31 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 09d59ae78b15748fdb131fbe9b4074e7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  arm: {fileID: 1707442775}
+  gripper: {fileID: 1707442774}
+  sceneSync: {fileID: 1707442773}
   tomatoTarget: {fileID: 463806580}
   placementTarget: {fileID: 1006382759}
-  robotBase: {fileID: 1123158652}
-  sceneSync: {fileID: 0}
   gripAttachPoint: {fileID: 222883942}
   graspYawOffset: 0
+  eeFrameCorrectionEuler: {x: -90, y: 0, z: 0}
   approachHeight: 0.1
+  verticalStepSize: 0.03
   placeClearance: 0.005
   surfaceRayHeight: 1
   fingertipDrop: 0.02
-  verticalStepSize: 0.03
-  gripperOpen: 0
-  gripperClosed: 0.6
+  tableClearance: 0.01
   serviceTimeout: 15
-  trajectoryTimeScale: 1
-  armSettleTimeout: 6
-  settleToleranceDeg: 0.5
-  settleVelocity: 0.02
-  gripperSettleTime: 1
-  driveStiffness: 100000
-  driveDamping: 10000
-  driveForceLimit: 10000
-  gripperJoints:
-  - linkName: left_outer_knuckle
-    multiplier: 1
-  - linkName: left_inner_knuckle
-    multiplier: 1
-  - linkName: left_inner_finger
-    multiplier: -1
-  - linkName: right_outer_knuckle
-    multiplier: 1
-  - linkName: right_inner_knuckle
-    multiplier: 1
-  - linkName: right_inner_finger
-    multiplier: -1
-  gripperStiffness: 20000
-  gripperDamping: 2000
-  gripperForceLimit: 200
+  graspHeightFraction: 0.6
+  objectMass: 0.3
+  objectFriction: 1.5
+  gripHoldTime: 0.4
+  maxGraspGap: 0.03
+  maxHoldDrift: 0.04
+  useGraspAssist: 1
+  assistBreakForce: 500
+  stemJoint: {fileID: 0}
+  verbose: 1
 --- !u!114 &1707442773
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7438,6 +7462,60 @@ MonoBehaviour:
   obstacles:
   - {fileID: 513996259}
   - {fileID: 513996259}
+--- !u!114 &1707442774
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1707442769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 86cce0d33c74d9bc4a966530fe14b3a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  arm: {fileID: 1707442775}
+  open: 0
+  closed: 0.6
+  leadLink: left_outer_knuckle
+  stiffness: 20000
+  damping: 2000
+  forceLimit: 100
+  settleVelocity: 0.06
+  settleTimeout: 1.5
+  joints:
+  - linkName: left_outer_knuckle
+    multiplier: 1
+  - linkName: left_inner_knuckle
+    multiplier: 1
+  - linkName: left_inner_finger
+    multiplier: -1
+  - linkName: right_outer_knuckle
+    multiplier: 1
+  - linkName: right_inner_knuckle
+    multiplier: 1
+  - linkName: right_inner_finger
+    multiplier: -1
+--- !u!114 &1707442775
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1707442769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c2d830a53e1fae1a0a434a9edc4422b7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  robotBase: {fileID: 1123158652}
+  stiffness: 100000
+  damping: 3000
+  forceLimit: 10000
+  timeScale: 1
+  settleTimeout: 3
+  settleToleranceDeg: 0.5
+  settleVelocity: 0.06
 --- !u!1001 &1730299870
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -7727,10 +7805,10 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -50.000023
     upperLimit: 50.000023
-    stiffness: 0
-    damping: 0
-    forceLimit: 1000
-    target: 0
+    stiffness: 20000
+    damping: 2000
+    forceLimit: 200
+    target: -34.37747
     targetVelocity: 0
   m_YDrive:
     lowerLimit: 0
@@ -8153,9 +8231,9 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -360
     upperLimit: 360
-    stiffness: 0
-    damping: 0
-    forceLimit: 330
+    stiffness: 100000
+    damping: 10000
+    forceLimit: 10000
     target: 0
     targetVelocity: 0
   m_YDrive:
@@ -8178,7 +8256,7 @@ ArticulationBody:
   m_AngularDamping: 0
   m_JointFriction: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &1935457047
 MonoBehaviour:
@@ -8932,9 +9010,9 @@ ArticulationBody:
   m_XDrive:
     lowerLimit: -360
     upperLimit: 360
-    stiffness: 0
-    damping: 0
-    forceLimit: 56
+    stiffness: 100000
+    damping: 10000
+    forceLimit: 10000
     target: 0
     targetVelocity: 0
   m_YDrive:
@@ -8957,7 +9035,7 @@ ArticulationBody:
   m_AngularDamping: 0
   m_JointFriction: 0
   m_Immovable: 0
-  m_UseGravity: 1
+  m_UseGravity: 0
   m_CollisionDetectionMode: 0
 --- !u!114 &2122797046
 MonoBehaviour:
