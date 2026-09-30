@@ -27,6 +27,9 @@ public class HarvestPoseClient : MonoBehaviour
     [Tooltip("Extra yaw (degrees) around vertical. Use 90 if your fingers close along X instead of Y.")]
     public float graspYawOffset = 0f;
 
+    [Tooltip("Fixed rotation between Unity's tool0 and the frame MoveIt plans for. Tune until the fingers point down.")]
+    public Vector3 eeFrameCorrectionEuler = new Vector3(-90f, 0f, 0f);
+
     [Header("Approach / placing")]
     [Tooltip("Metres above the target the tool hovers before descending / after lifting.")]
     public float approachHeight = 0.10f;
@@ -354,9 +357,9 @@ public class HarvestPoseClient : MonoBehaviour
         // 3. Grasp orientation derived from the object and the robot base.
         Quaternion grasp = ComputeGraspRotation(tomatoTarget);
         Vector3 offsetWorld   = grasp * gripAttachPoint.localPosition;                        // flange -> fingertips, in the planned pose
-	Vector3 approachWorld = grasp * (gripAttachPoint.localRotation * Vector3.forward);    // attach +Z, in the planned pose
-	Vector3 cubeLocal     = robotBase.InverseTransformPoint(pickPoint);
-	Debug.Log($"[Check2] offset={offsetWorld}  approach={approachWorld}  cube horizontal dist={new Vector2(cubeLocal.x, cubeLocal.z).magnitude:F3} m");
+        Vector3 approachWorld = grasp * (gripAttachPoint.localRotation * Vector3.forward);    // attach +Z, in the planned pose
+        Vector3 cubeLocal     = robotBase.InverseTransformPoint(pickPoint);
+        Debug.Log($"[Check2] offset={offsetWorld}  approach={approachWorld}  cube horizontal dist={new Vector2(cubeLocal.x, cubeLocal.z).magnitude:F3} m");
         Vector3 up = Vector3.up * approachHeight;
 
         Vector3 pick = Flange(pickPoint, grasp);
@@ -379,6 +382,13 @@ public class HarvestPoseClient : MonoBehaviour
 
         bool completed = true;
 
+        bool FingersHoldingSomething()
+            {
+                if (!gripperBodies.TryGetValue("left_outer_knuckle", out var ab) || ab.dofCount == 0) return true;
+                float pos = ab.jointPosition[0];                 // radians
+                return Mathf.Abs(gripperClosed - pos) > 0.05f;   // stopped short of fully closed = something is in the way
+            }
+
         Debug.Log($"[Check] base y={robotBase.position.y:F3}  cubeCentre y={pickPoint.y:F3}  " +
                   $"attach parent='{gripAttachPoint.parent.name}'  attach localPos={gripAttachPoint.localPosition}  " +
                   $"attach +Z in world={gripAttachPoint.forward}");
@@ -386,15 +396,28 @@ public class HarvestPoseClient : MonoBehaviour
         foreach (var s in steps)
         {
             yield return SendAndAnimate(s.pos, grasp, s.grip, s.label);
-            if (!lastStepOk)
-            {
-                Debug.LogError($"Sequence aborted at step: {s.label}");
-                completed = false;
-                break;
-            }
 
-            if (s.label == "Grasp tomato") AttachObject(tomatoTarget);
-            else if (s.label == "Release tomato") DetachObject(tomatoTarget); // only after arm AND fingers have settled
+            Transform tool0 = gripAttachPoint.parent;
+            Vector3 wantedFlange = pick; // the flange target for this step
+            Debug.Log($"[Diag] flange error={Vector3.Distance(tool0.position, wantedFlange):F3} m | " +
+                    $"tool point={gripAttachPoint.position} | tomato={GetWorldBounds(tomatoTarget).center} | " +
+                    $"attach +Z={gripAttachPoint.forward}");
+            if (s.label == "Grasp tomato")
+            {
+                Vector3 gap = GetWorldBounds(tomatoTarget).center - gripAttachPoint.position;
+                if (gap.magnitude > 0.03f)
+                {
+                    Debug.LogError($"Grasp failed: tool point is {gap.magnitude:F3} m from the tomato.");
+                    completed = false; break;
+                }
+                if (!FingersHoldingSomething())
+                {
+                    Debug.LogError("Grasp failed: fingers closed fully, nothing between them.");
+                    completed = false; break;
+                }
+                AttachObject(tomatoTarget);
+            }
+            else if (s.label == "Release tomato") DetachObject(tomatoTarget);
         }
 
         if (completed) Debug.Log("Harvest sequence complete.");
@@ -408,7 +431,8 @@ public class HarvestPoseClient : MonoBehaviour
         HarvestPoseResponse result = null;
 
         Vector3 localPos = robotBase.InverseTransformPoint(targetPosition);
-        Quaternion localRot = Quaternion.Inverse(robotBase.rotation) * targetRotation;
+        Quaternion sentRot = targetRotation * Quaternion.Euler(eeFrameCorrectionEuler);
+        Quaternion localRot = Quaternion.Inverse(robotBase.rotation) * sentRot;
 
         HarvestPoseRequest request = new HarvestPoseRequest();
         request.target_pose = new PoseMsg(
