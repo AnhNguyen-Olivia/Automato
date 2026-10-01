@@ -237,11 +237,12 @@ public class HarvestPoseClient : MonoBehaviour
                 holding = false;
             }
             else if (holding)
-            {
-                float drift = ObjectToTool() - baseline;
-                Log("Hold", $"{s.label}: drift={drift:F3} m");
-                if (drift > maxHoldDrift) { Debug.LogError($"Object slipped (drift {drift:F3} m)."); done(false); yield break; }
-            }
+		{
+		    yield return arm.WaitSettled();   // measure after the arm stops, not mid-motion
+		    float drift = ObjectToTool() - baseline;
+		    Log("Hold", $"{s.label}: drift={drift:F3} m, assistJoint alive={assistJoint != null}");
+		    if (drift > maxHoldDrift) { Debug.LogError($"Object slipped (drift {drift:F3} m)."); done(false); yield break; }
+		}
         }
         done(true);
     }

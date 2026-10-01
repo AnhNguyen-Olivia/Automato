@@ -304,5 +304,5 @@
 {"msg":"runNodeAction","annotation":"CopyFiles Library/ScriptAssemblies/Unity.Robotics.PickAndPlace.pdb","index":292}
 {"msg":"inputSignatureChanged","annotation":"CopyFiles Library/ScriptAssemblies/Unity.Robotics.PickAndPlace.dll","index":291,"changes":[{"key":"InputFileList","value":["Library/Bee/artifacts/2400b0aE.dag/Unity.Robotics.PickAndPlace.dll"],"oldvalue":[],"dependency":"explicit"}]}
 {"msg":"runNodeAction","annotation":"CopyFiles Library/ScriptAssemblies/Unity.Robotics.PickAndPlace.dll","index":291}
-{"msg":"noderesult","processed_node_count":295,"number_of_nodes_ever_queued":298,"annotation":"CopyFiles Library/ScriptAssemblies/Unity.Robotics.PickAndPlace.dll","index":291,"exitcode":0,"outputfile":"Library/ScriptAssemblies/Unity.Robotics.PickAndPlace.dll"}
-{"msg":"noderesult","processed_node_count":295,"number_of_nodes_ever_queued":298,"annotation":"CopyFiles Library/ScriptAssemblies/Unity.Robotics.PickAndPlace.pdb","index":292,"exitcode":0,"outputfile":"Library/ScriptAssemblies/Unity.Robotics.PickAndPlace.pdb"}
+{"msg":"noderesult","processed_node_count":289,"number_of_nodes_ever_queued":298,"annotation":"CopyFiles Library/ScriptAssemblies/Unity.Robotics.PickAndPlace.pdb","index":292,"exitcode":0,"outputfile":"Library/ScriptAssemblies/Unity.Robotics.PickAndPlace.pdb"}
+{"msg":"noderesult","processed_node_count":293,"number_of_nodes_ever_queued":298,"annotation":"CopyFiles Library/ScriptAssemblies/Unity.Robotics.PickAndPlace.dll","index":291,"exitcode":0,"outputfile":"Library/ScriptAssemblies/Unity.Robotics.PickAndPlace.dll"}
