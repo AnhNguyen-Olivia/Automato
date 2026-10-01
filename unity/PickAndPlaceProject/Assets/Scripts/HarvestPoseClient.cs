@@ -18,7 +18,8 @@ public class HarvestPoseClient : MonoBehaviour
     public PlanningSceneSync sceneSync;
 
     [Header("Scene references")]
-    public Transform tomatoTarget;      // the cube for now, the tomato later
+    public Transform tomatoTarget;      // the fruit (child of the plant)
+    public Transform peduncleTarget;    // grasp point on the stem, child of the tomato
     public Transform placementTarget;
     [Tooltip("Empty child of tool0 between the fingertips. +Z = toward fingertips, +Y = finger closing axis.")]
     public Transform gripAttachPoint;
@@ -29,27 +30,30 @@ public class HarvestPoseClient : MonoBehaviour
 
     [Header("Motion")]
     public float approachHeight = 0.05f;
-    public float verticalStepSize = 0.2f;
+    public float verticalStepSize = 0.12f;   // keep < 0.15 so the server uses its slow Cartesian branch
     public float placeClearance = 0.005f;
     public float surfaceRayHeight = 1f;
-    [Tooltip("How far the finger pads reach below the grip attach point (m).")]
-    public float fingertipDrop = 0.01f;
-    public float tableClearance = 0.01f;
     public float serviceTimeout = 15f;
 
+    [Header("Peduncle grasp")]
+    public float approachDistance = 0.10f;   // pre-grasp pose sits this far back, horizontally
+    public float retreatDistance  = 0.10f;   // pull back this far after closing
+    public float transitHeight    = 0.25f;   // extra height while carrying
+    public float carryStepSize    = 0.12f;   // arc length per planned step (m), keep < 0.15
+    public float graspRoll        = 0f;      // rotate tool about approach axis (try 180 if unreachable)
+
     [Header("Grasp")]
-    [Range(0f, 1f)] public float graspHeightFraction = 1.0f;
     public float objectMass = 0.3f;
     public float objectFriction = 1.5f;
     public float gripHoldTime = 0.4f;
-    [Tooltip("Max distance between object centre and tool point after closing (m).")]
+    [Tooltip("Max distance between stem point and tool point after closing (m).")]
     public float maxGraspGap = 0.03f;
     [Tooltip("Abort if the object drifts this far from the tool after closing (m).")]
     public float maxHoldDrift = 0.04f;
 
     [Header("Grasp assist (keeps the object attached while the fingers hold it)")]
     public bool useGraspAssist = true;
-    public float assistBreakForce = 500f;
+    public float assistBreakForce = 5000f;
     [Tooltip("Optional. Joint holding the fruit to the plant (peduncle). Destroyed right after a successful grasp.")]
     public Joint stemJoint;
 
@@ -109,6 +113,7 @@ public class HarvestPoseClient : MonoBehaviour
         if (gripper == null) missing.Add("HarvestPoseClient.gripper");
         else if (gripper.arm == null) missing.Add("GripperController.arm");
         if (tomatoTarget == null) missing.Add("tomatoTarget");
+        if (peduncleTarget == null) missing.Add("peduncleTarget");
         if (placementTarget == null) missing.Add("placementTarget");
         if (gripAttachPoint == null) missing.Add("gripAttachPoint");
 
@@ -138,42 +143,43 @@ public class HarvestPoseClient : MonoBehaviour
 
     List<Step> BuildSteps(out Quaternion grasp)
     {
-        grasp = ComputeGraspRotation(tomatoTarget);
+        // Target the exact physical center of the tomato mesh
+        Bounds fruitBounds = WorldBounds(tomatoTarget);
+        Vector3 pickPoint = fruitBounds.center;
 
-        // Pick point: a fraction up the object, but never so low that the fingertips hit the table.
-        Bounds tb = WorldBounds(tomatoTarget);
-        Vector3 pickPoint = tb.center;
-        pickPoint.y = tb.min.y + tb.size.y * graspHeightFraction;
-        if (TryFindSurface(pickPoint, out Vector3 table))
-        {
-            float minY = table.y + fingertipDrop + tableClearance;
-            if (minY > pickPoint.y) Log("Reach", $"tool y clamped {pickPoint.y:F3} -> {minY:F3} (table y={table.y:F3})");
-            pickPoint.y = Mathf.Max(pickPoint.y, minY);
-            if (pickPoint.y > tb.max.y - 0.01f) Debug.LogWarning("[Reach] Object too low to grasp above the table.");
-        }
-        else Debug.LogWarning("[Reach] No surface under object; fingertip clamp not applied.");
+        grasp = ComputePeduncleGraspRotation(pickPoint, out Vector3 dir);
 
-        // Place point: object centre above the placement surface.
+        // The fruit hangs below the grip point by this much.
+        float hang = Mathf.Max(0f, pickPoint.y - fruitBounds.min.y);
+
+        // Place: grip point high enough that the fruit's BOTTOM clears the basket floor.
         Vector3 placePoint = placementTarget.position;
         if (TryFindSurface(placePoint, out Vector3 surface)) placePoint = surface;
-        placePoint += Vector3.up * (tb.extents.y + placeClearance);
+        placePoint += Vector3.up * (hang + placeClearance);
 
         PrepareObject(tomatoTarget);
 
         if (Vector3.Dot(gripAttachPoint.localPosition.normalized, gripAttachPoint.localRotation * Vector3.forward) < 0.99f)
             Debug.LogWarning("gripAttachPoint +Z does not point from the flange toward the fingertips.");
 
-        Vector3 pick = Flange(pickPoint, grasp), place = Flange(placePoint, grasp), up = Vector3.up * approachHeight;
+        Vector3 pick = Flange(pickPoint, grasp), place = Flange(placePoint, grasp);
+        Vector3 pre  = pick - dir * approachDistance;
+        Vector3 back = pick - dir * retreatDistance;
+        Vector3 up = Vector3.up * approachHeight, tUp = Vector3.up * transitHeight;
         float O = gripper.open, C = gripper.closed;
 
         var s = new List<Step> { new Step(Kind.Move, pick + up, O, "Hover") };
         AddLinear(s, pick + up, pick, O, "Descend");
         s.Add(new Step(Kind.Grasp, pick, C, "Grasp"));
-        AddLinear(s, pick, pick + up, C, "Lift");
-        s.Add(new Step(Kind.Move, place + up, C, "Move above basket"));
-        AddLinear(s, place + up, place, C, "Lower");
+        
+        AddLinear(s, pick, back, C, "Detach");   // pull away from the plant
+        AddLinear(s, back, back + tUp, C, "Lift");
+        AddArc(s, back + tUp, place + tUp, C, "Carry");
+        
+        AddLinear(s, place + tUp, place, C, "Lower");
         s.Add(new Step(Kind.Release, place, O, "Release"));
         AddLinear(s, place, place + up, O, "Retreat");
+        
         return s;
     }
 
@@ -182,6 +188,25 @@ public class HarvestPoseClient : MonoBehaviour
         int n = Mathf.Max(1, Mathf.CeilToInt(Vector3.Distance(from, to) / verticalStepSize));
         for (int i = 1; i <= n; i++)
             steps.Add(new Step(Kind.Move, Vector3.Lerp(from, to, i / (float)n), grip, $"{label} {i}/{n}"));
+    }
+
+    /// Swing around the robot base at a constant reach, in short steps.
+    void AddArc(List<Step> steps, Vector3 from, Vector3 to, float grip, string label)
+    {
+        Vector3 c = arm.robotBase.position;
+        Vector3 a = Vector3.ProjectOnPlane(from - c, Vector3.up);
+        Vector3 b = Vector3.ProjectOnPlane(to - c, Vector3.up);
+        float angle = Vector3.SignedAngle(a, b, Vector3.up);
+        float arcLen = Mathf.Abs(angle) * Mathf.Deg2Rad * 0.5f * (a.magnitude + b.magnitude);
+        int n = Mathf.Max(1, Mathf.CeilToInt(arcLen / carryStepSize));
+        for (int i = 1; i <= n; i++)
+        {
+            float t = i / (float)n;
+            Vector3 p = (Quaternion.AngleAxis(angle * t, Vector3.up) * a).normalized * Mathf.Lerp(a.magnitude, b.magnitude, t);
+            p.x += c.x; p.z += c.z;
+            p.y = Mathf.Lerp(from.y, to.y, t);
+            steps.Add(new Step(Kind.Move, p, grip, $"{label} {i}/{n}"));
+        }
     }
 
     // --------------------------------------------------------------- execution
@@ -201,9 +226,9 @@ public class HarvestPoseClient : MonoBehaviour
                 yield return PlanAndPlay(s, grasp);
                 if (!stepOk) { done(false); yield break; }
 
-                if (s.label.StartsWith("Descend") && FlangeError(s.pos) > 0.04f)
+                if (s.label.StartsWith("Approach") && FlangeError(s.pos) > 0.04f)
                 {
-                    Debug.LogError($"[{s.label}] Descent blocked, flange {FlangeError(s.pos):F3} m from target. Not closing.");
+                    Debug.LogError($"[{s.label}] Approach blocked, flange {FlangeError(s.pos):F3} m from target. Not closing.");
                     LogBlockers();
                     done(false); yield break;
                 }
@@ -225,7 +250,7 @@ public class HarvestPoseClient : MonoBehaviour
                 Log("Grasp", $"lead={gripper.LeadPosition:F2} rad, holdsObject={gripper.HoldsObject()}, object-to-tool={gap:F3} m");
 
                 if (!gripper.HoldsObject()) { Debug.LogError("Grasp failed: fingers closed fully (nothing between them)."); done(false); yield break; }
-                if (gap > maxGraspGap)      { Debug.LogError($"Grasp failed: tool is {gap:F3} m from the object."); done(false); yield break; }
+                if (gap > maxGraspGap)      { Debug.LogError($"Grasp failed: tool is {gap:F3} m from the stem."); done(false); yield break; }
 
                 baseline = gap;
                 holding = true;
@@ -237,12 +262,12 @@ public class HarvestPoseClient : MonoBehaviour
                 holding = false;
             }
             else if (holding)
-		{
-		    yield return arm.WaitSettled();   // measure after the arm stops, not mid-motion
-		    float drift = ObjectToTool() - baseline;
-		    Log("Hold", $"{s.label}: drift={drift:F3} m, assistJoint alive={assistJoint != null}");
-		    if (drift > maxHoldDrift) { Debug.LogError($"Object slipped (drift {drift:F3} m)."); done(false); yield break; }
-		}
+            {
+                yield return arm.WaitSettled();   // measure after the arm stops, not mid-motion
+                float drift = ObjectToTool() - baseline;
+                Log("Hold", $"{s.label}: drift={drift:F3} m, assistJoint alive={assistJoint != null}");
+                if (drift > maxHoldDrift) { Debug.LogError($"Object slipped (drift {drift:F3} m)."); done(false); yield break; }
+            }
         }
         done(true);
     }
@@ -298,7 +323,6 @@ public class HarvestPoseClient : MonoBehaviour
     // ------------------------------------------------------------- grasp physics
 
     /// Rigidbody + friction so the object behaves when squeezed.
-    /// Rigidbody + friction so the object behaves when squeezed.
     void PrepareObject(Transform obj)
     {
         var rb = obj.GetComponent<Rigidbody>() ?? obj.gameObject.AddComponent<Rigidbody>();
@@ -315,26 +339,24 @@ public class HarvestPoseClient : MonoBehaviour
             dynamicFriction = objectFriction, staticFriction = objectFriction, bounciness = 0f,
             frictionCombine = PhysicMaterialCombine.Maximum, bounceCombine = PhysicMaterialCombine.Minimum
         };
-        
-        // Grab all colliders on the target object
+
+        // Grab all colliders on the target object (fruit and peduncle)
         var targetColliders = obj.GetComponentsInChildren<Collider>();
         foreach (var c in targetColliders) c.sharedMaterial = mat;
 
         // Iterate through all colliders on the robot arm/gripper
         foreach (var gripperCol in gripAttachPoint.root.GetComponentsInChildren<Collider>())
         {
-            if (gripperCol.name.ToLower().Contains("finger")) 
+            if (gripperCol.name.ToLower().Contains("finger"))
             {
                 // Apply the friction material to the fingers
                 gripperCol.sharedMaterial = mat;
             }
-            else 
+            else
             {
                 // Ignore collisions between the knuckles/base and the target object
                 foreach (var targetCol in targetColliders)
-                {
                     Physics.IgnoreCollision(gripperCol, targetCol, true);
-                }
             }
         }
 
@@ -362,28 +384,18 @@ public class HarvestPoseClient : MonoBehaviour
 
     // ------------------------------------------------------------------ geometry
 
-    /// Tool points straight down; fingers close along the horizontal object axis most aligned with the arm's tangent.
-    Quaternion ComputeGraspRotation(Transform obj)
+    /// Horizontal approach: +Z of the attach point points from the robot toward the stem,
+    /// +Y (finger closing axis) is horizontal and perpendicular to it, so the fingers close across a vertical stem.
+    Quaternion ComputePeduncleGraspRotation(Vector3 stemPos, out Vector3 approachDir)
     {
         Transform rb = arm.robotBase;
-        Vector3 radial = Vector3.ProjectOnPlane(obj.position - rb.position, Vector3.up);
-        if (radial.sqrMagnitude < 1e-4f) radial = rb.forward;
-        radial.Normalize();
-        Vector3 tangent = Vector3.Cross(Vector3.up, radial);
+        approachDir = Vector3.ProjectOnPlane(stemPos - rb.position, Vector3.up);
+        if (approachDir.sqrMagnitude < 1e-4f) approachDir = rb.forward;
+        approachDir.Normalize();
 
-        Vector3 best = tangent;
-        float bestDot = -2f;
-        foreach (var c in new[] { obj.right, -obj.right, obj.forward, -obj.forward })
-        {
-            Vector3 h = Vector3.ProjectOnPlane(c, Vector3.up);
-            if (h.sqrMagnitude < 1e-4f) continue;
-            h.Normalize();
-            float d = Vector3.Dot(h, tangent);
-            if (d > bestDot) { bestDot = d; best = h; }
-        }
-        best = Quaternion.AngleAxis(graspYawOffset, Vector3.up) * best;
-
-        Quaternion attachWorld = Quaternion.LookRotation(Vector3.down, best);
+        Vector3 closeAxis = Vector3.Cross(Vector3.up, approachDir);
+        Quaternion attachWorld = Quaternion.AngleAxis(graspRoll + graspYawOffset, approachDir)
+                               * Quaternion.LookRotation(approachDir, closeAxis);
         return attachWorld * Quaternion.Inverse(gripAttachPoint.localRotation);
     }
 
@@ -392,7 +404,13 @@ public class HarvestPoseClient : MonoBehaviour
 
     float FlangeError(Vector3 target) => Vector3.Distance(gripAttachPoint.parent.position, target);
 
-    float ObjectToTool() => Vector3.Distance(WorldBounds(tomatoTarget).center, gripAttachPoint.position);
+    /// Distance from the fruit center to the tool point.
+    float ObjectToTool()
+    {
+        Bounds fruitBounds = WorldBounds(tomatoTarget);
+        Vector3 held = fruitBounds.center;
+        return Vector3.Distance(held, gripAttachPoint.position);
+    }
 
     static Bounds WorldBounds(Transform obj)
     {
@@ -432,7 +450,7 @@ public class HarvestPoseClient : MonoBehaviour
 
     // ------------------------------------------------------------------ debugging
 
-    /// Lists non-robot colliders near the tool (used when a descent stops short).
+    /// Lists non-robot colliders near the tool (used when an approach stops short).
     void LogBlockers()
     {
         var seen = new HashSet<string>();
