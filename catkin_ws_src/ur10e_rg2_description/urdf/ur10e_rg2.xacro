@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro" name="ur10e_rg2">
+
+  <xacro:include filename="$(find ur_description)/urdf/inc/ur10e_macro.xacro"/>
+  <xacro:ur10e_robot prefix=""/>
+
+  <xacro:include filename="$(find onrobot_rg_description)/urdf/onrobot_rg2_model_macro.xacro"/>
+
+  <link name="onrobot_rg2_base_link">
+    <inertial>
+      <origin xyz="0.0 0.0 0.0" rpy="0 0 0" />
+      <mass value="0.7" />
+      <inertia ixx="1.0E-03" ixy="1.0E-06" ixz="1.0E-06" iyy="1.0E-03" iyz="1.0E-06" izz="1.0E-03" />
+    </inertial>
+    <visual>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://onrobot_rg_description/meshes/rg2/visual/base_link.stl" />
+      </geometry>
+      <material name="">
+        <color rgba="0.8 0.8 0.8 1" />
+      </material>
+    </visual>
+    <collision>
+      <origin xyz="0 0 0" rpy="0 0 0" />
+      <geometry>
+        <mesh filename="package://onrobot_rg_description/meshes/rg2/collision/base_link.stl" />
+      </geometry>
+    </collision>
+  </link>
+
+  <xacro:finger_links prefix="" fingerprefix="left"/>
+  <xacro:finger_links prefix="" fingerprefix="right"/>
+  <xacro:finger_joint prefix=""/>
+  <xacro:right_outer_knuckle_joint prefix=""/>
+
+  <joint name="gripper_mount_joint" type="fixed">
+    <parent link="tool0"/>
+    <child link="onrobot_rg2_base_link"/>
+    <origin xyz="0 0 0" rpy="0 0 0"/>
+  </joint>
+
+</robot>
