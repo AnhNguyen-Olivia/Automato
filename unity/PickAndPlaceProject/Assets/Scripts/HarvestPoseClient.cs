@@ -22,14 +22,22 @@ public class HarvestPoseClient : MonoBehaviour
     [Header("Grasp orientation")]
     [Tooltip("Point the tool straight down (approach from above). Recommended.")]
     public bool topDownGrasp = true;
-    [Tooltip("Rotation about the vertical axis in degrees. Changes which way the RG2 fingers straddle the tomato. Try 0 and 90.")]
+    [Tooltip("Rotation about the vertical axis in degrees. Changes which way the RG2 fingers straddle the tomato/stem. Try 0 and 90.")]
     public float graspYawDegrees = 0f;
     [Tooltip("Only used when Top Down Grasp is off. WORLD euler angles of tool0.")]
     public Vector3 graspEuler = Vector3.zero;
+    [Tooltip("Rotation between Unity's tool0 and the frame MoveIt plans for. If the log says the approach axis is ~90 deg from straight down, try (90,0,0), (-90,0,0), (0,90,0), (0,-90,0)...")]
+    public Vector3 moveItFrameCorrectionEuler = Vector3.zero;
 
     [Header("Grasp point")]
-    [Tooltip("Where to grip, relative to the tomato centre, along world up (metres). 0 = centre, positive = towards the top.")]
+    [Tooltip("Fallback only: where to grip, relative to the tomato centre, along world up (metres). Used when there is no Stem Target and no collider.")]
     public float graspHeightOffset = 0f;
+
+    [Header("Stem grasp point")]
+    [Tooltip("Optional: an empty object placed on the stem where the fingers should close. Overrides everything else.")]
+    public Transform stemTarget;
+    [Tooltip("If no Stem Target is set, grip this far above the top of the tomato's collider (metres).")]
+    public float stemOffsetAboveTop = 0.02f;
 
     [Header("Tool centre point")]
     [Tooltip("The tool0 object. If empty, the parent of Grip Attach Point is used.")]
@@ -43,7 +51,7 @@ public class HarvestPoseClient : MonoBehaviour
 
     [Header("Approach")]
     [Tooltip("Metres above the target the tool hovers before descending / after lifting.")]
-    public float approachHeight = 0.10f;
+    public float approachHeight = 0.04f;
 
     [Header("Gripper values")]
     public float gripperOpen = 0.0f;
@@ -62,6 +70,9 @@ public class HarvestPoseClient : MonoBehaviour
     Rigidbody grabbedRb;
     Transform grabbedOriginalParent;
     bool isHolding = false;
+
+    // Distance between the grasp point and the tomato centre, measured at the start of the sequence.
+    float expectedGraspGap = 0f;
 
     [Header("Joint drive tuning")]
     public float driveStiffness = 100000f;
@@ -195,7 +206,7 @@ public class HarvestPoseClient : MonoBehaviour
     {
         if (!autoTcpFromAttachPoint) return;
 
-        Transform tool = tool0 != null ? tool0 : (gripAttachPoint != null ? gripAttachPoint.parent : null);
+        Transform tool = ToolTransform();
         if (tool == null || gripAttachPoint == null)
         {
             Debug.LogWarning("[TCP] Can't auto-calibrate: assign Grip Attach Point (a child of tool0) and/or Tool0.");
@@ -215,6 +226,12 @@ public class HarvestPoseClient : MonoBehaviour
         Debug.Log($"[TCP] Auto-calibrated: approach axis (tool0 local) = {toolApproachLocal}, offset = {tcpOffset:F3} m.");
     }
 
+    Transform ToolTransform()
+    {
+        if (tool0 != null) return tool0;
+        return gripAttachPoint != null ? gripAttachPoint.parent : null;
+    }
+
     void ApplyGripper(float radians)
     {
         foreach (var g in gripperJoints)
@@ -232,14 +249,40 @@ public class HarvestPoseClient : MonoBehaviour
 
     void OnDrawGizmosSelected()
     {
-        if (gripAttachPoint == null) return;
-        Gizmos.color = Color.green;
-        Gizmos.DrawWireSphere(gripAttachPoint.position, 0.015f);
-        Transform tool = tool0 != null ? tool0 : gripAttachPoint.parent;
-        if (tool != null) Gizmos.DrawLine(tool.position, gripAttachPoint.position);
+        if (gripAttachPoint != null)
+        {
+            Gizmos.color = Color.green;
+            Gizmos.DrawWireSphere(gripAttachPoint.position, 0.015f);
+            Transform tool = ToolTransform();
+            if (tool != null) Gizmos.DrawLine(tool.position, gripAttachPoint.position);
+        }
+
+        if (tomatoTarget != null)
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(GraspPoint(), 0.015f);
+        }
     }
 
     // ------------------------------------------------------------------ grasp
+
+    /// World point where the fingers should close: the stem target if set,
+    /// otherwise just above the top of the tomato's collider.
+    Vector3 GraspPoint()
+    {
+        if (stemTarget != null) return stemTarget.position;
+
+        if (tomatoTarget != null)
+        {
+            var c = tomatoTarget.GetComponentInChildren<Collider>();
+            if (c != null)
+                return new Vector3(c.bounds.center.x, c.bounds.max.y + stemOffsetAboveTop, c.bounds.center.z);
+
+            return tomatoTarget.position + Vector3.up * graspHeightOffset;
+        }
+
+        return Vector3.zero;
+    }
 
     /// Disable/enable collisions between the held object and the whole robot.
     void IgnoreRobotCollisions(Transform obj, bool ignore)
@@ -267,13 +310,12 @@ public class HarvestPoseClient : MonoBehaviour
             return;
         }
 
-        // If the gripper isn't actually around the tomato, it will look like the tomato floats in front of it.
+        // If the gripper isn't actually around the grasp point, it will look like the tomato floats in front of it.
         float gap = Vector3.Distance(gripAttachPoint.position, obj.position);
-        float expected = Mathf.Abs(graspHeightOffset);
-        if (gap > expected + 0.03f)
+        if (gap > expectedGraspGap + 0.03f)
         {
-            Debug.LogWarning($"[Grasp] The tomato is {gap * 100f:F1} cm from the grip point (expected about {expected * 100f:F1} cm). " +
-                             "The gripper is not where the tomato is: check the grasp orientation, TCP offset and Grip Attach Point.");
+            Debug.LogWarning($"[Grasp] The tomato is {gap * 100f:F1} cm from the grip point (expected about {expectedGraspGap * 100f:F1} cm). " +
+                             "The gripper is not where the grasp point is: check the grasp orientation, TCP offset and Grip Attach Point.");
         }
 
         grabbedRb = obj.GetComponent<Rigidbody>();
@@ -398,7 +440,9 @@ public class HarvestPoseClient : MonoBehaviour
         Quaternion grasp = GraspRotation();
         Vector3 up = Vector3.up * approachHeight;
 
-        Vector3 tomatoPoint = tomatoTarget.position + Vector3.up * graspHeightOffset;
+        // Grip at the stem (or just above the tomato), not at the tomato centre.
+        Vector3 tomatoPoint = GraspPoint();
+        expectedGraspGap = Vector3.Distance(tomatoPoint, tomatoTarget.position);
         Vector3 tomato = Flange(tomatoPoint, grasp);
         Vector3 basket = Flange(placementTarget.position, grasp);
 
@@ -441,9 +485,10 @@ public class HarvestPoseClient : MonoBehaviour
         bool done = false;
         HarvestPoseResponse result = null;
 
-        // Express the target in the robot base's frame, then convert Unity -> ROS
+        // Express the target in the robot base's frame, then convert Unity -> ROS.
+        // moveItFrameCorrectionEuler compensates if MoveIt's tip frame differs from Unity's tool0 orientation.
         Vector3 localPos = robotBase.InverseTransformPoint(targetPosition);
-        Quaternion localRot = Quaternion.Inverse(robotBase.rotation) * targetRotation;
+        Quaternion localRot = Quaternion.Inverse(robotBase.rotation) * targetRotation * Quaternion.Euler(moveItFrameCorrectionEuler);
 
         HarvestPoseRequest request = new HarvestPoseRequest();
         request.target_pose = new PoseMsg(
@@ -481,6 +526,14 @@ public class HarvestPoseClient : MonoBehaviour
 
         ApplyGripper(gripperPosition);
         yield return new WaitForSeconds(gripperSettleTime);
+
+        // Diagnostic: how far is the real approach axis from straight down?
+        Transform tool = ToolTransform();
+        if (tool != null)
+        {
+            Vector3 axisWorld = tool.TransformDirection(toolApproachLocal.normalized);
+            Debug.Log($"[{stepLabel}] approach axis is {Vector3.Angle(axisWorld, Vector3.down):F1}° away from straight down");
+        }
 
         Debug.Log($"[{stepLabel}] Animation complete.");
         lastStepOk = true;

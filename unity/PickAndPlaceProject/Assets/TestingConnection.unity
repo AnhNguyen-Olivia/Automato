@@ -8005,6 +8005,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   geometryType: 3
+--- !u!4 &1672411639 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 3772460349226102413, guid: e724c289b1aa27e4a8d5534b97035c59, type: 3}
+  m_PrefabInstance: {fileID: 1935985005}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &1684816545 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5726849172734504052, guid: 314d7044c80eeab4495c40900c1bd616, type: 3}
@@ -8109,8 +8114,11 @@ MonoBehaviour:
   topDownGrasp: 1
   graspYawDegrees: 0
   graspEuler: {x: 0, y: 0, z: 0}
+  moveItFrameCorrectionEuler: {x: 0, y: 0, z: 0}
   graspHeightOffset: 0
-  tool0: {fileID: 0}
+  stemTarget: {fileID: 1672411639}
+  stemOffsetAboveTop: 0.02
+  tool0: {fileID: 1172246087}
   autoTcpFromAttachPoint: 1
   tcpOffset: 0.15
   toolApproachLocal: {x: 0, y: 0, z: 1}
