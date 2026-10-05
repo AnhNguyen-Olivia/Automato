@@ -1,0 +1,9 @@
+geometry_msgs/Pose target_pose
+float64 gripper_position
+geometry_msgs/Point cube_position
+bool attach_cube
+bool detach_cube
+---
+bool success
+string message
+trajectory_msgs/JointTrajectory trajectory
