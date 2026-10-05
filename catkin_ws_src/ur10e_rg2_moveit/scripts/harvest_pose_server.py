@@ -9,6 +9,17 @@ from moveit_msgs.srv import (GetPlanningScene, GetPlanningSceneRequest, ApplyPla
                              GetStateValidity, GetStateValidityRequest)
 from ur10e_rg2_moveit.srv import HarvestPose, HarvestPoseResponse
 
+# Unity must send a gripper_position below this value to request a state reset
+# (e.g. -999). Normal finger angles (grip_open = -0.2284, grip_close = 0.7853)
+# are all above it, so they no longer trigger a reset by accident.
+RESET_SENTINEL = -100.0
+
+# Max allowed joint change between two consecutive Cartesian points (rad).
+# With 5 mm steps anything bigger than this is almost certainly an IK flip.
+MAX_JOINT_JUMP = 0.2
+
+BASE_LINKS = ["base_link", "base_link_inertia", "base", "shoulder_link"]
+
 
 def pose_distance(p1, p2):
     return math.sqrt(
@@ -16,7 +27,14 @@ def pose_distance(p1, p2):
     )
 
 
-BASE_LINKS = ["base_link", "base_link_inertia", "base", "shoulder_link"]
+def max_joint_jump(traj):
+    """Largest single-joint change between consecutive trajectory points."""
+    pts = traj.joint_trajectory.points
+    return max(
+        (max(abs(a - b) for a, b in zip(p1.positions, p0.positions))
+         for p0, p1 in zip(pts, pts[1:])),
+        default=0.0,
+    )
 
 
 def set_allowed(acm, a, b, allowed=True):
@@ -59,10 +77,10 @@ class HarvestPoseServer:
 
         self.arm_group = moveit_commander.MoveGroupCommander("arm_group")
         self.arm_group.set_planner_id("RRTConnect")
-        self.arm_group.set_planning_time(10.0)              # was 10.0: a failure no longer freezes the run
+        self.arm_group.set_planning_time(10.0)
         self.arm_group.set_num_planning_attempts(5)
-        self.arm_group.set_max_velocity_scaling_factor(0.2)      # RRT fallback is slow too
-        self.arm_group.set_max_acceleration_scaling_factor(0.2)
+        self.arm_group.set_max_velocity_scaling_factor(0.3)
+        self.arm_group.set_max_acceleration_scaling_factor(0.3)
         self.scene = moveit_commander.PlanningSceneInterface()
 
         # Tracked state: Unity moves the arm, ROS never executes, so we remember
@@ -89,12 +107,12 @@ class HarvestPoseServer:
 
     def diagnose_cartesian_failure(self, target_pose, start_state, fraction, plan):
         """Explain WHY a Cartesian path stopped early. Log lines are prefixed [Diag].
-        Not verified against your setup; wrapped so it can never break the request."""
+        Wrapped so it can never break the request."""
         try:
             rospy.logwarn("[Diag] Cartesian with collisions: fraction %.2f, %d points",
                           fraction, len(plan.joint_trajectory.points))
 
-            # 1) Same path with collision checking OFF (start state is still the tracked one).
+            # 1) Same path with collision checking OFF
             plan_nc, frac_nc = self.arm_group.compute_cartesian_path(
                 [target_pose], 0.005, avoid_collisions=False)
             rospy.logwarn("[Diag] Cartesian WITHOUT collision check: fraction %.2f, %d points",
@@ -118,8 +136,7 @@ class HarvestPoseServer:
             rospy.logwarn("[Diag] Target flange pos=(%.3f, %.3f, %.3f)",
                           target_pose.position.x, target_pose.position.y, target_pose.position.z)
 
-            # 3) Ask MoveIt which bodies collide at the first invalid point of the
-            #    collision-free path
+            # 3) Ask MoveIt which bodies collide at the first invalid point
             rospy.wait_for_service("/check_state_validity", timeout=3.0)
             check = rospy.ServiceProxy("/check_state_validity", GetStateValidity)
             jt = plan_nc.joint_trajectory
@@ -162,7 +179,7 @@ class HarvestPoseServer:
             return response
 
     def _handle(self, req, response):
-        if req.gripper_position < 0:   # Unity restarted: forget tracked state
+        if req.gripper_position < RESET_SENTINEL:   # Unity restarted: forget tracked state
             self.last_joint_names = None
             self.last_joint_positions = None
             self.last_pose = None
@@ -170,6 +187,7 @@ class HarvestPoseServer:
             response.message = "Tracked state reset."
             rospy.loginfo(response.message)
             return response
+
         try:
             self.prepare_scene()
         except Exception as e:
@@ -207,6 +225,14 @@ class HarvestPoseServer:
             [req.target_pose], 0.005, avoid_collisions=True)   # Noetic: no jump_threshold argument
         rospy.loginfo("Cartesian path fraction: %.2f", fraction)
 
+        # Reject paths where the IK flipped between two neighbouring points.
+        if fraction > 0:
+            jump = max_joint_jump(cartesian_plan)
+            rospy.loginfo("Max joint jump: %.3f rad", jump)
+            if jump > MAX_JOINT_JUMP:
+                rospy.logwarn("IK flip detected, rejecting Cartesian path.")
+                fraction = 0.0
+
         # Short moves must be straight. Long moves must be almost complete, otherwise fall back to RRTConnect.
         min_fraction = 0.9 if short_move else 0.99
 
@@ -218,7 +244,7 @@ class HarvestPoseServer:
             return response
 
         if fraction >= min_fraction:
-            scale = 0.3 if short_move else 0.15
+            scale = 0.3
             arm_plan = self.arm_group.retime_trajectory(
                 start_state,
                 cartesian_plan,

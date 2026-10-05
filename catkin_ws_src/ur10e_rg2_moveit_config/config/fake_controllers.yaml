@@ -14,6 +14,6 @@ controller_list:
       - finger_joint
 initial:  # Define initial robot poses per group
   - group: arm_group
-    pose: rest_pose
+    pose: ready
   - group: grip_group
-    pose: grip_close
+    pose: grip_open

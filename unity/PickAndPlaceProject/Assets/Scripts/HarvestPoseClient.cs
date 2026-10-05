@@ -10,6 +10,9 @@ public class HarvestPoseClient : MonoBehaviour
     ROSConnection ros;
     const string serviceName = "harvest_pose";
 
+    // Must be below RESET_SENTINEL (-100) in harvest_pose_server.py.
+    const float ResetSentinel = -999f;
+
     [Header("Scene references")]
     public Transform tomatoTarget;
     public Transform placementTarget;
@@ -17,10 +20,22 @@ public class HarvestPoseClient : MonoBehaviour
     public Transform robotBase;
 
     [Header("Grasp orientation")]
-    [Tooltip("WORLD euler angles of tool0 when the gripper points at the tomato. Read them from tool0 in the Inspector.")]
+    [Tooltip("Point the tool straight down (approach from above). Recommended.")]
+    public bool topDownGrasp = true;
+    [Tooltip("Rotation about the vertical axis in degrees. Changes which way the RG2 fingers straddle the tomato. Try 0 and 90.")]
+    public float graspYawDegrees = 0f;
+    [Tooltip("Only used when Top Down Grasp is off. WORLD euler angles of tool0.")]
     public Vector3 graspEuler = Vector3.zero;
 
+    [Header("Grasp point")]
+    [Tooltip("Where to grip, relative to the tomato centre, along world up (metres). 0 = centre, positive = towards the top.")]
+    public float graspHeightOffset = 0f;
+
     [Header("Tool centre point")]
+    [Tooltip("The tool0 object. If empty, the parent of Grip Attach Point is used.")]
+    public Transform tool0;
+    [Tooltip("Measure the approach axis and TCP offset from Grip Attach Point instead of using the two values below.")]
+    public bool autoTcpFromAttachPoint = true;
     [Tooltip("Distance in metres from the tool0 flange to the point between the fingertips.")]
     public float tcpOffset = 0.15f;
     [Tooltip("Axis of tool0 (in tool0's local space) that points from the flange towards the fingertips.")]
@@ -60,16 +75,20 @@ public class HarvestPoseClient : MonoBehaviour
         public float multiplier = 1; // the URDF <mimic> multiplier relative to finger_joint
     }
 
+    // NOTE: values already saved in the Inspector override these defaults.
+    // Defaults below come from the /joint_states output of the URDF mimic setup
+    // (finger_joint = +x -> left_inner_knuckle -x, left_inner_finger +x,
+    //  right_outer_knuckle -x, right_inner_knuckle -x, right_inner_finger +x).
+    // If the linkage looks deformed in Unity, flip the sign of the wrong ones.
     [Header("Gripper joints (Unity side)")]
-    [Tooltip("Verify each multiplier against the <mimic> tags in your gripper URDF.")]
     public List<GripperJointSetting> gripperJoints = new List<GripperJointSetting>
     {
         new GripperJointSetting { linkName = "left_outer_knuckle",  multiplier =  1f },
-        new GripperJointSetting { linkName = "left_inner_knuckle",  multiplier =  1f },  // unverified
-        new GripperJointSetting { linkName = "left_inner_finger",   multiplier = -1f },  // unverified
-        new GripperJointSetting { linkName = "right_outer_knuckle", multiplier =  1f },  // unverified
-        new GripperJointSetting { linkName = "right_inner_knuckle", multiplier =  1f },  // unverified
-        new GripperJointSetting { linkName = "right_inner_finger",  multiplier = -1f },  // unverified
+        new GripperJointSetting { linkName = "left_inner_knuckle",  multiplier = -1f },
+        new GripperJointSetting { linkName = "left_inner_finger",   multiplier =  1f },
+        new GripperJointSetting { linkName = "right_outer_knuckle", multiplier = -1f },
+        new GripperJointSetting { linkName = "right_inner_knuckle", multiplier = -1f },
+        new GripperJointSetting { linkName = "right_inner_finger",  multiplier =  1f },
     };
     public float gripperStiffness = 20000f;
     public float gripperDamping = 2000f;
@@ -93,6 +112,10 @@ public class HarvestPoseClient : MonoBehaviour
     bool sequenceRunning = false;
     bool lastStepOk = false;
 
+    // False until the ROS server has been told "Unity arm is at home".
+    // Reset to false every time Play starts, so the server never keeps the old tracked pose.
+    bool serverStateKnown = false;
+
     // ------------------------------------------------------------------ setup
 
     void Awake()
@@ -104,6 +127,7 @@ public class HarvestPoseClient : MonoBehaviour
     {
         ros = ROSConnection.GetOrCreateInstance();
         ros.RegisterRosService<HarvestPoseRequest, HarvestPoseResponse>(serviceName);
+        CalibrateTcp();
     }
 
     Transform RobotRoot()
@@ -166,6 +190,31 @@ public class HarvestPoseClient : MonoBehaviour
         Debug.Log("[HarvestPoseClient] Drives configured.");
     }
 
+    /// Measures the approach axis and TCP offset from the Grip Attach Point, so they can't be wrong by guesswork.
+    void CalibrateTcp()
+    {
+        if (!autoTcpFromAttachPoint) return;
+
+        Transform tool = tool0 != null ? tool0 : (gripAttachPoint != null ? gripAttachPoint.parent : null);
+        if (tool == null || gripAttachPoint == null)
+        {
+            Debug.LogWarning("[TCP] Can't auto-calibrate: assign Grip Attach Point (a child of tool0) and/or Tool0.");
+            return;
+        }
+
+        float dist = Vector3.Distance(tool.position, gripAttachPoint.position);
+        if (dist < 0.02f)
+        {
+            Debug.LogWarning("[TCP] Grip Attach Point is almost at tool0's origin. Move it between the fingertips.");
+            return;
+        }
+
+        Vector3 local = tool.InverseTransformPoint(gripAttachPoint.position);
+        toolApproachLocal = local.normalized;
+        tcpOffset = dist;
+        Debug.Log($"[TCP] Auto-calibrated: approach axis (tool0 local) = {toolApproachLocal}, offset = {tcpOffset:F3} m.");
+    }
+
     void ApplyGripper(float radians)
     {
         foreach (var g in gripperJoints)
@@ -181,7 +230,34 @@ public class HarvestPoseClient : MonoBehaviour
         }
     }
 
+    void OnDrawGizmosSelected()
+    {
+        if (gripAttachPoint == null) return;
+        Gizmos.color = Color.green;
+        Gizmos.DrawWireSphere(gripAttachPoint.position, 0.015f);
+        Transform tool = tool0 != null ? tool0 : gripAttachPoint.parent;
+        if (tool != null) Gizmos.DrawLine(tool.position, gripAttachPoint.position);
+    }
+
     // ------------------------------------------------------------------ grasp
+
+    /// Disable/enable collisions between the held object and the whole robot.
+    void IgnoreRobotCollisions(Transform obj, bool ignore)
+    {
+        if (robotBase == null || obj == null) return;
+
+        var objCols = obj.GetComponentsInChildren<Collider>();
+        var robotCols = robotBase.GetComponentsInChildren<Collider>();
+        foreach (var a in objCols)
+        {
+            foreach (var b in robotCols)
+            {
+                if (a == null || b == null || a == b) continue;
+                if (b.transform.IsChildOf(obj)) continue; // collider belongs to the object itself
+                Physics.IgnoreCollision(a, b, ignore);
+            }
+        }
+    }
 
     void AttachObject(Transform obj)
     {
@@ -191,13 +267,24 @@ public class HarvestPoseClient : MonoBehaviour
             return;
         }
 
+        // If the gripper isn't actually around the tomato, it will look like the tomato floats in front of it.
+        float gap = Vector3.Distance(gripAttachPoint.position, obj.position);
+        float expected = Mathf.Abs(graspHeightOffset);
+        if (gap > expected + 0.03f)
+        {
+            Debug.LogWarning($"[Grasp] The tomato is {gap * 100f:F1} cm from the grip point (expected about {expected * 100f:F1} cm). " +
+                             "The gripper is not where the tomato is: check the grasp orientation, TCP offset and Grip Attach Point.");
+        }
+
         grabbedRb = obj.GetComponent<Rigidbody>();
         if (grabbedRb != null)
         {
-            // Kinematic while held so physics doesn't fight the parent transform
-            // or make it slip out of the fingers.
+            // Kinematic while held so physics doesn't fight the parent transform.
             grabbedRb.isKinematic = true;
         }
+
+        // The held tomato must not push the arm's articulation bodies around.
+        IgnoreRobotCollisions(obj, true);
 
         grabbedOriginalParent = obj.parent;
         obj.SetParent(gripAttachPoint, true); // keep world position, then it follows the gripper
@@ -210,6 +297,7 @@ public class HarvestPoseClient : MonoBehaviour
         if (obj == null) return;
 
         obj.SetParent(grabbedOriginalParent, true); // keep current world position on release
+        IgnoreRobotCollisions(obj, false);
         if (grabbedRb != null)
         {
             grabbedRb.isKinematic = false; // let it fall / settle under physics again
@@ -230,10 +318,54 @@ public class HarvestPoseClient : MonoBehaviour
         StartCoroutine(RunHarvestSequence());
     }
 
+    /// Tool orientation used for every step of the sequence.
+    Quaternion GraspRotation()
+    {
+        if (!topDownGrasp) return Quaternion.Euler(graspEuler);
+
+        // Rotate tool0 so that its approach axis points straight down, then spin about the vertical.
+        Quaternion pointDown = Quaternion.FromToRotation(toolApproachLocal.normalized, Vector3.down);
+        return Quaternion.AngleAxis(graspYawDegrees, Vector3.up) * pointDown;
+    }
+
     /// Converts a point between the fingertips into the tool0 flange position.
     Vector3 Flange(Vector3 tcpPoint, Quaternion rot)
     {
         return tcpPoint - (rot * toolApproachLocal.normalized) * tcpOffset;
+    }
+
+    /// Tells the ROS server that the Unity arm is at its home pose, so it forgets the old tracked state.
+    IEnumerator SendReset()
+    {
+        bool done = false;
+        HarvestPoseResponse result = null;
+
+        var request = new HarvestPoseRequest();
+        request.target_pose = new PoseMsg();
+        request.gripper_position = ResetSentinel;
+
+        ros.SendServiceMessage<HarvestPoseResponse>(serviceName, request, (HarvestPoseResponse response) =>
+        {
+            result = response;
+            done = true;
+        });
+
+        float t0 = Time.realtimeSinceStartup;
+        yield return new WaitUntil(() => done || Time.realtimeSinceStartup - t0 > serviceTimeout);
+
+        if (!done)
+        {
+            Debug.LogError("[Reset] Service timed out. Is the ROS side running?");
+            yield break;
+        }
+        if (result == null || !result.success)
+        {
+            Debug.LogError($"[Reset] FAILED: {result?.message}");
+            yield break;
+        }
+
+        serverStateKnown = true;
+        Debug.Log($"[Reset] {result.message}");
     }
 
     IEnumerator RunHarvestSequence()
@@ -247,10 +379,27 @@ public class HarvestPoseClient : MonoBehaviour
             yield break;
         }
 
-        Quaternion grasp = Quaternion.Euler(graspEuler);
+        // First run after pressing Play: the arm is at home, so make the server forget its old tracked pose.
+        if (!serverStateKnown)
+        {
+            yield return SendReset();
+            if (!serverStateKnown)
+            {
+                sequenceRunning = false;
+                yield break;
+            }
+        }
+
+        // Keep the tomato still while the fingers approach, so they can't knock it away.
+        Rigidbody tomatoRb = tomatoTarget.GetComponent<Rigidbody>();
+        bool tomatoWasKinematic = tomatoRb != null && tomatoRb.isKinematic;
+        if (tomatoRb != null) tomatoRb.isKinematic = true;
+
+        Quaternion grasp = GraspRotation();
         Vector3 up = Vector3.up * approachHeight;
 
-        Vector3 tomato = Flange(tomatoTarget.position, grasp);
+        Vector3 tomatoPoint = tomatoTarget.position + Vector3.up * graspHeightOffset;
+        Vector3 tomato = Flange(tomatoPoint, grasp);
         Vector3 basket = Flange(placementTarget.position, grasp);
 
         var steps = new (Vector3 pos, float grip, string label)[]
@@ -278,6 +427,9 @@ public class HarvestPoseClient : MonoBehaviour
             if (s.label == "Grasp tomato") AttachObject(tomatoTarget);
             else if (s.label == "Release tomato") DetachObject(tomatoTarget);
         }
+
+        // If we gave up before the tomato was picked, put its physics state back.
+        if (!completed && !isHolding && tomatoRb != null) tomatoRb.isKinematic = tomatoWasKinematic;
 
         if (completed) Debug.Log("Harvest sequence complete.");
         sequenceRunning = false;
@@ -334,6 +486,18 @@ public class HarvestPoseClient : MonoBehaviour
         lastStepOk = true;
     }
 
+    void SetArmTargets(ArticulationBody[] cols, double[] from, double[] to, float a)
+    {
+        for (int i = 0; i < cols.Length && i < from.Length && i < to.Length; i++)
+        {
+            if (cols[i] == null) continue;
+            double rad = from[i] + (to[i] - from[i]) * a;
+            var drive = cols[i].xDrive;
+            drive.target = (float)(rad * Mathf.Rad2Deg);
+            cols[i].xDrive = drive;
+        }
+    }
+
     IEnumerator PlayTrajectory(RosMessageTypes.Trajectory.JointTrajectoryMsg trajectory)
     {
         if (joints.Count == 0) FindJoints();
@@ -351,23 +515,52 @@ public class HarvestPoseClient : MonoBehaviour
             }
         }
 
-        // Time against the clock, not per-point waits, so frame rounding doesn't accumulate.
-        float start = Time.time;
+        var pts = trajectory.points;
+        int n = pts.Length;
+        if (n == 0) yield break;
 
-        foreach (var point in trajectory.points)
+        // Does Unity's arm actually start where MoveIt thinks it does?
+        float worstDiff = 0f;
+        string worstJoint = "";
+        for (int i = 0; i < cols.Length; i++)
         {
-            float pointTime = (float)(point.time_from_start.sec + point.time_from_start.nanosec / 1e9);
+            if (cols[i] == null || cols[i].dofCount == 0 || i >= pts[0].positions.Length) continue;
+            float diff = Mathf.Abs(cols[i].jointPosition[0] - (float)pts[0].positions[i]);
+            if (diff > worstDiff) { worstDiff = diff; worstJoint = trajectory.joint_names[i]; }
+        }
+        if (worstDiff > 0.05f)
+        {
+            Debug.LogWarning($"[PlayTrajectory] Unity's arm is {worstDiff:F2} rad away from where the plan starts (worst joint: {worstJoint}). " +
+                             "Unity and MoveIt disagree about the arm pose, so it will snap at the start of this move.");
+        }
 
-            for (int i = 0; i < point.positions.Length && i < cols.Length; i++)
+        float[] times = new float[n];
+        for (int k = 0; k < n; k++)
+            times[k] = (float)(pts[k].time_from_start.sec + pts[k].time_from_start.nanosec / 1e9);
+
+        // Interpolate between points every frame, timed against the clock.
+        float start = Time.time;
+        int seg = 0;
+        while (true)
+        {
+            float t = Time.time - start;
+            bool finished = t >= times[n - 1];
+            if (finished) t = times[n - 1];
+
+            if (n == 1)
             {
-                if (cols[i] == null) continue;
-                var drive = cols[i].xDrive;
-                drive.target = (float)(point.positions[i] * Mathf.Rad2Deg);
-                cols[i].xDrive = drive;
+                SetArmTargets(cols, pts[0].positions, pts[0].positions, 0f);
+            }
+            else
+            {
+                while (seg < n - 2 && times[seg + 1] < t) seg++;
+                float span = times[seg + 1] - times[seg];
+                float a = span > 1e-6f ? Mathf.Clamp01((t - times[seg]) / span) : 1f;
+                SetArmTargets(cols, pts[seg].positions, pts[seg + 1].positions, a);
             }
 
-            if (Time.time - start < pointTime)
-                yield return new WaitUntil(() => Time.time - start >= pointTime);
+            if (finished) break;
+            yield return null;
         }
     }
 }
