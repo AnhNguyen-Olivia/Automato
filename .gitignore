@@ -1,3 +1,6 @@
-catkin_ws_src/onrobot/
-catkin_ws_src/universal_robot/
 catkin_ws_src/CMakeLists.txt
+unity/PickAndPlaceProject/Library/
+unity/PickAndPlaceProject/Logs/
+unity/PickAndPlaceProject/Temp/
+unity/PickAndPlaceProject/obj/
+unity/PickAndPlaceProject/UserSettings/
