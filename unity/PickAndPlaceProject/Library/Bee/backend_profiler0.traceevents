@@ -1,4 +1,5 @@
 { "cat":"", "pid":12345, "tid":0, "ts":0, "ph":"M", "name":"process_name", "args": { "name":"bee_backend" } }
+<<<<<<< Updated upstream
 <<<<<<< HEAD
 <<<<<<< Updated upstream
 ,{ "pid":12345, "tid":0, "ts":1790869129731495, "dur":155, "ph":"X", "name": "DriverInitData",  "args": { "detail":"" }}
@@ -58,6 +59,8 @@
 ,{ "pid":12345, "tid":12, "ts":1790869129732095, "dur":1533, "ph":"X", "name": "FirstLock",  "args": { "detail":"" }}
 ,{ "pid":12345, "tid":0, "ts":1790869129734317, "dur":29, "ph":"X", "name": "ProfilerWriteOutput" }
 =======
+=======
+>>>>>>> Stashed changes
 ,{ "pid":12345, "tid":0, "ts":1791498879963778, "dur":357, "ph":"X", "name": "DriverInitData",  "args": { "detail":"" }}
 ,{ "pid":12345, "tid":0, "ts":1791498879964142, "dur":3699, "ph":"X", "name": "Tundra",  "args": { "detail":"RemoveStaleOutputs" }}
 ,{ "pid":12345, "tid":0, "ts":1791498879967863, "dur":37, "ph":"X", "name": "Tundra",  "args": { "detail":"PrepareNodes" }}
@@ -1300,6 +1303,7 @@
 ,{ "pid":12345, "tid":12, "ts":1791498881429957, "dur":3, "ph":"X", "name": "OutputFilesMissingFor",  "args": { "detail":"" }}
 ,{ "pid":12345, "tid":12, "ts":1791498881429960, "dur":36, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
 ,{ "pid":12345, "tid":0, "ts":1791498881430576, "dur":409, "ph":"X", "name": "ProfilerWriteOutput" }
+<<<<<<< Updated upstream
 >>>>>>> Stashed changes
 =======
 ,{ "pid":12345, "tid":0, "ts":1791262368312697, "dur":519, "ph":"X", "name": "DriverInitData",  "args": { "detail":"" }}
@@ -2471,4 +2475,6 @@
 ,{ "pid":12345, "tid":12, "ts":1791262368335640, "dur":200, "ph":"X", "name": "WaitingForWork", "cname":"thread_state_sleeping",  "args": { "detail":"" }}
 ,{ "pid":12345, "tid":0, "ts":1791262368337164, "dur":844, "ph":"X", "name": "ProfilerWriteOutput" }
 >>>>>>> feature/3-rg2-gripper-integration
+=======
+>>>>>>> Stashed changes
 ,
