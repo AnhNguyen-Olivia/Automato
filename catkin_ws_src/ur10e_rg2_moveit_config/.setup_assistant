@@ -1,0 +1,11 @@
+moveit_setup_assistant_config:
+  URDF:
+    package: ur10e_rg2_description
+    relative_path: urdf/ur10e_rg2.xacro
+    xacro_args: ""
+  SRDF:
+    relative_path: config/ur10e_rg2.srdf
+  CONFIG:
+    author_name: Olivia_Nguyen
+    author_email: 10423198@student.vgu.edu.vn
+    generated_timestamp: 1790507976
