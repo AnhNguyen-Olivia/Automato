@@ -18,7 +18,7 @@ RESET_SENTINEL = -100.0
 # With 5 mm steps anything bigger than this is almost certainly an IK flip.
 MAX_JOINT_JUMP = 0.2
 
-BASE_LINKS = ["base_link", "base_link_inertia", "base", "shoulder_link"]
+BASE_LINKS = ["base_link", "base_link_inertia", "base", "shoulder_link", "upper_arm_link", "forearm_link", "wrist_1_link", "wrist_2_link", "wrist_3_link"]
 
 
 def pose_distance(p1, p2):
@@ -210,7 +210,27 @@ class HarvestPoseServer:
             self.arm_group.set_start_state_to_current_state()
             start_state = self.arm_group.get_current_state()
             start_pos = self.arm_group.get_current_pose().pose.position
-            rospy.loginfo("Planning from current (initial) state.")
+            
+            names = list(start_state.joint_state.name)
+            positions = list(start_state.joint_state.position)
+            
+            # Check if joints are stuck flat at 0.0 (WSL sync drop)
+            if all(abs(p) < 0.01 for p in positions[:4]):
+                rospy.logwarn("WSL dropped connection. Forcing upright start state.")
+                
+                # Safely set joints by exact name to avoid gripper conflicts
+                if 'shoulder_lift_joint' in names:
+                    positions[names.index('shoulder_lift_joint')] = -1.5708
+                if 'wrist_1_joint' in names:
+                    positions[names.index('wrist_1_joint')] = -1.5708
+                    
+                start_state.joint_state.position = positions
+                self.arm_group.set_start_state(start_state)
+                
+                # Force a large starting distance so MoveIt correctly defaults to the RRTConnect planner
+                start_pos.x += 1.0 
+                
+            rospy.loginfo("Planning from initial state.")
 
         dist = pose_distance(start_pos, req.target_pose.position)
         rospy.loginfo("Move distance: %.3fm", dist)

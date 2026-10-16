@@ -23,7 +23,7 @@ public class HarvestPoseClient : MonoBehaviour
     [Tooltip("Point the tool straight down (approach from above). Recommended.")]
     public bool topDownGrasp = true;
     [Tooltip("Rotation about the vertical axis in degrees. Changes which way the RG2 fingers straddle the tomato/stem. Try 0 and 90.")]
-    public float graspYawDegrees = 0f;
+    public float graspYawDegrees = 45f;
     [Tooltip("Only used when Top Down Grasp is off. WORLD euler angles of tool0.")]
     public Vector3 graspEuler = Vector3.zero;
     [Tooltip("Rotation between Unity's tool0 and the frame MoveIt plans for. If the log says the approach axis is ~90 deg from straight down, try (90,0,0), (-90,0,0), (0,90,0), (0,-90,0)...")]
@@ -59,7 +59,7 @@ public class HarvestPoseClient : MonoBehaviour
 
     [Header("Timing")]
     [Tooltip("Seconds to wait for the ROS service before giving up on a step.")]
-    public float serviceTimeout = 15f;
+    public float serviceTimeout = 30f;
     [Tooltip("Seconds to let the arm settle after a trajectory finishes.")]
     public float armSettleTime = 0.3f;
 
@@ -446,6 +446,8 @@ public class HarvestPoseClient : MonoBehaviour
         Vector3 tomato = Flange(tomatoPoint, grasp);
         Vector3 basket = Flange(placementTarget.position, grasp);
 
+        Vector3 startPosition = ToolTransform().position;
+
         var steps = new (Vector3 pos, float grip, string label)[]
         {
             (tomato + up, gripperOpen,   "Hover over tomato"),
@@ -455,6 +457,8 @@ public class HarvestPoseClient : MonoBehaviour
             (basket + up, gripperClosed, "Move above basket"),
             (basket,      gripperClosed, "Lower into basket"),
             (basket,      gripperOpen,   "Release tomato"),
+            (basket + up, gripperOpen,   "Lift from basket"),
+            (startPosition, gripperOpen, "Return to start position")
         };
 
         bool completed = true;

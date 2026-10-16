@@ -369,7 +369,7 @@ GameObject:
   m_Component:
   - component: {fileID: 47243998}
   - component: {fileID: 47243999}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: unnamed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -485,6 +485,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: outer_knuckle
       objectReference: {fileID: 0}
+    - target: {fileID: 4224491815504101332, guid: ade5f0e89fdc05e4b9f005a4a228ae9c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510156719180285882, guid: ade5f0e89fdc05e4b9f005a4a228ae9c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 7904146484868454278, guid: ade5f0e89fdc05e4b9f005a4a228ae9c, type: 3}
       propertyPath: m_Materials.Array.data[0]
       value: 
@@ -553,7 +561,7 @@ GameObject:
   m_Component:
   - component: {fileID: 75866842}
   - component: {fileID: 75866843}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: unnamed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -689,7 +697,7 @@ GameObject:
   m_Component:
   - component: {fileID: 124601411}
   - component: {fileID: 124601412}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: unnamed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1716,6 +1724,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: outer_knuckle
       objectReference: {fileID: 0}
+    - target: {fileID: 706308014791027457, guid: 9fdec246a02479e48aa47f8f0f9797e7, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 868286377736621631, guid: 9fdec246a02479e48aa47f8f0f9797e7, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 7095523450052741413, guid: 9fdec246a02479e48aa47f8f0f9797e7, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -1915,7 +1931,7 @@ GameObject:
   m_Component:
   - component: {fileID: 461728578}
   - component: {fileID: 461728579}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: unnamed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2030,6 +2046,14 @@ PrefabInstance:
     - target: {fileID: 706308014791027457, guid: 9fdec246a02479e48aa47f8f0f9797e7, type: 3}
       propertyPath: m_Name
       value: outer_knuckle
+      objectReference: {fileID: 0}
+    - target: {fileID: 706308014791027457, guid: 9fdec246a02479e48aa47f8f0f9797e7, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 868286377736621631, guid: 9fdec246a02479e48aa47f8f0f9797e7, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7095523450052741413, guid: 9fdec246a02479e48aa47f8f0f9797e7, type: 3}
       propertyPath: m_RootOrder
@@ -2425,6 +2449,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: inner_knuckle
       objectReference: {fileID: 0}
+    - target: {fileID: 6307028498999473586, guid: e797bdd38f6d6f547b530b0740fafbc2, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8935506138279750698, guid: e797bdd38f6d6f547b530b0740fafbc2, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e797bdd38f6d6f547b530b0740fafbc2, type: 3}
 --- !u!1 &600219999
@@ -2574,7 +2606,7 @@ GameObject:
   m_Component:
   - component: {fileID: 614764452}
   - component: {fileID: 614764453}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collisions
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2817,7 +2849,7 @@ GameObject:
   m_Component:
   - component: {fileID: 662259318}
   - component: {fileID: 662259319}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collisions
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3139,7 +3171,7 @@ GameObject:
   m_Component:
   - component: {fileID: 687866801}
   - component: {fileID: 687866802}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Visuals
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3308,7 +3340,7 @@ GameObject:
   - component: {fileID: 710127817}
   - component: {fileID: 710127816}
   - component: {fileID: 710127815}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: left_inner_knuckle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3441,7 +3473,7 @@ GameObject:
   m_Component:
   - component: {fileID: 716924997}
   - component: {fileID: 716924998}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collisions
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3506,7 +3538,7 @@ GameObject:
   m_Component:
   - component: {fileID: 767030112}
   - component: {fileID: 767030113}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Visuals
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4205,6 +4237,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: inner_knuckle
       objectReference: {fileID: 0}
+    - target: {fileID: 1756228049218662340, guid: 1054a93a510613a4d967fb1122906348, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 5644599473358449635, guid: 1054a93a510613a4d967fb1122906348, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -4256,6 +4292,10 @@ PrefabInstance:
     - target: {fileID: 5644599473358449635, guid: 1054a93a510613a4d967fb1122906348, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8025377000081432764, guid: 1054a93a510613a4d967fb1122906348, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1789132835625427868, guid: 1054a93a510613a4d967fb1122906348, type: 3}
@@ -4349,7 +4389,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2781043625631727712, guid: 85db2308098d34a79837fb7356902f62, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.6030002
+      value: -1.603
       objectReference: {fileID: 0}
     - target: {fileID: 2781043625631727712, guid: 85db2308098d34a79837fb7356902f62, type: 3}
       propertyPath: m_LocalPosition.z
@@ -4432,7 +4472,7 @@ GameObject:
   m_Component:
   - component: {fileID: 935254066}
   - component: {fileID: 935254067}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: unnamed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4564,7 +4604,7 @@ GameObject:
   - component: {fileID: 985969710}
   - component: {fileID: 985969709}
   - component: {fileID: 985969708}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: right_inner_knuckle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4754,6 +4794,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: inner_knuckle
       objectReference: {fileID: 0}
+    - target: {fileID: 6307028498999473586, guid: e797bdd38f6d6f547b530b0740fafbc2, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 8935506138279750698, guid: e797bdd38f6d6f547b530b0740fafbc2, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e797bdd38f6d6f547b530b0740fafbc2, type: 3}
 --- !u!4 &1006382759 stripped
@@ -4905,7 +4953,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1023570504}
   - component: {fileID: 1023570505}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Visuals
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4950,7 +4998,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1030410387}
   - component: {fileID: 1030410388}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: unnamed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5245,7 +5293,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1097790942}
   - component: {fileID: 1097790943}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: unnamed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5288,9 +5336,17 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1097790942}
     m_Modifications:
+    - target: {fileID: 1247779016888446225, guid: 501f588041e345640be7974790305c01, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 5542062717646491138, guid: 501f588041e345640be7974790305c01, type: 3}
       propertyPath: m_Name
       value: inner_finger
+      objectReference: {fileID: 0}
+    - target: {fileID: 5542062717646491138, guid: 501f588041e345640be7974790305c01, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6366806754169924101, guid: 501f588041e345640be7974790305c01, type: 3}
       propertyPath: m_RootOrder
@@ -5729,7 +5785,7 @@ GameObject:
   - component: {fileID: 1158545339}
   - component: {fileID: 1158545338}
   - component: {fileID: 1158545337}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: left_outer_knuckle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6188,7 +6244,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1204444667}
   - component: {fileID: 1204444668}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: unnamed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6239,7 +6295,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1232862264}
   - component: {fileID: 1232862265}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collisions
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6284,7 +6340,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1235547434}
   - component: {fileID: 1235547435}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collisions
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6421,7 +6477,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1254412806}
   - component: {fileID: 1254412807}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Collisions
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6631,6 +6687,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: inner_finger
       objectReference: {fileID: 0}
+    - target: {fileID: 868411754868474435, guid: d2501757c0c8f2a4eb35805ab093ecf7, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5163721516071062640, guid: d2501757c0c8f2a4eb35805ab093ecf7, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 6674843462388330703, guid: d2501757c0c8f2a4eb35805ab093ecf7, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -6697,7 +6761,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1380902987}
   - component: {fileID: 1380902988}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Visuals
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -6985,7 +7049,7 @@ GameObject:
   - component: {fileID: 1435838352}
   - component: {fileID: 1435838351}
   - component: {fileID: 1435838350}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: right_inner_finger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7118,7 +7182,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1440085954}
   - component: {fileID: 1440085955}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: unnamed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7307,6 +7371,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: inner_knuckle
       objectReference: {fileID: 0}
+    - target: {fileID: 1756228049218662340, guid: 1054a93a510613a4d967fb1122906348, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 5644599473358449635, guid: 1054a93a510613a4d967fb1122906348, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -7358,6 +7426,10 @@ PrefabInstance:
     - target: {fileID: 5644599473358449635, guid: 1054a93a510613a4d967fb1122906348, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8025377000081432764, guid: 1054a93a510613a4d967fb1122906348, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 1789132835625427868, guid: 1054a93a510613a4d967fb1122906348, type: 3}
@@ -7463,7 +7535,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1539625244}
   - component: {fileID: 1539625245}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: unnamed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7531,7 +7603,7 @@ GameObject:
   - component: {fileID: 1563249291}
   - component: {fileID: 1563249290}
   - component: {fileID: 1563249289}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: right_outer_knuckle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -7942,7 +8014,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1595814933}
   - component: {fileID: 1595814934}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: unnamed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8066,7 +8138,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1668300889}
   - component: {fileID: 1668300890}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: unnamed
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8208,20 +8280,20 @@ MonoBehaviour:
   tomatoTarget: {fileID: 1583794805}
   placementTarget: {fileID: 1006382759}
   robotBase: {fileID: 1123158652}
-  topDownGrasp: 1
-  graspYawDegrees: 0
+  topDownGrasp: 0
+  graspYawDegrees: 45
   graspEuler: {x: 0, y: 0, z: 0}
   moveItFrameCorrectionEuler: {x: 0, y: 0, z: 0}
   graspHeightOffset: 0
   stemTarget: {fileID: 1672411639}
-  stemOffsetAboveTop: 0.02
+  stemOffsetAboveTop: 0
   tool0: {fileID: 1172246087}
   autoTcpFromAttachPoint: 1
   tcpOffset: 0.15
   toolApproachLocal: {x: 0, y: 0, z: 1}
   approachHeight: 0.1
   gripperOpen: 0
-  gripperClosed: 0.6
+  gripperClosed: 1
   serviceTimeout: 15
   armSettleTime: 0.3
   gripAttachPoint: {fileID: 222883942}
@@ -8241,9 +8313,9 @@ MonoBehaviour:
     multiplier: 1
   - linkName: right_inner_finger
     multiplier: -1
-  gripperStiffness: 20000
+  gripperStiffness: 50000
   gripperDamping: 2000
-  gripperForceLimit: 200
+  gripperForceLimit: 2000
   gripperSettleTime: 1
 --- !u!114 &1707442773
 MonoBehaviour:
@@ -8333,6 +8405,14 @@ PrefabInstance:
     - target: {fileID: 4224491815504101332, guid: ade5f0e89fdc05e4b9f005a4a228ae9c, type: 3}
       propertyPath: m_Name
       value: outer_knuckle
+      objectReference: {fileID: 0}
+    - target: {fileID: 4224491815504101332, guid: ade5f0e89fdc05e4b9f005a4a228ae9c, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 4510156719180285882, guid: ade5f0e89fdc05e4b9f005a4a228ae9c, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 7904146484868454278, guid: ade5f0e89fdc05e4b9f005a4a228ae9c, type: 3}
       propertyPath: m_Materials.Array.data[0]
@@ -8529,7 +8609,7 @@ GameObject:
   - component: {fileID: 1749852715}
   - component: {fileID: 1749852714}
   - component: {fileID: 1749852713}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: left_inner_finger
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8668,6 +8748,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: inner_finger
       objectReference: {fileID: 0}
+    - target: {fileID: 868411754868474435, guid: d2501757c0c8f2a4eb35805ab093ecf7, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 5163721516071062640, guid: d2501757c0c8f2a4eb35805ab093ecf7, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 6674843462388330703, guid: d2501757c0c8f2a4eb35805ab093ecf7, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -8788,7 +8876,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1887723255}
   - component: {fileID: 1887723256}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Visuals
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -8927,9 +9015,17 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 1030410387}
     m_Modifications:
+    - target: {fileID: 1247779016888446225, guid: 501f588041e345640be7974790305c01, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 5542062717646491138, guid: 501f588041e345640be7974790305c01, type: 3}
       propertyPath: m_Name
       value: inner_finger
+      objectReference: {fileID: 0}
+    - target: {fileID: 5542062717646491138, guid: 501f588041e345640be7974790305c01, type: 3}
+      propertyPath: m_Layer
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 6366806754169924101, guid: 501f588041e345640be7974790305c01, type: 3}
       propertyPath: m_RootOrder
@@ -9496,7 +9592,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1988927662}
   - component: {fileID: 1988927663}
-  m_Layer: 0
+  m_Layer: 6
   m_Name: Visuals
   m_TagString: Untagged
   m_Icon: {fileID: 0}
