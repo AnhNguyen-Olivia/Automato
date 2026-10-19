@@ -16,6 +16,7 @@ namespace RosMessageTypes.Ur10eRg2Moveit
         public Geometry.PoseMsg target_pose;
         public double gripper_position;
         public Geometry.PointMsg cube_position;
+        public Geometry.Vector3Msg[] distance_vectors;
         public bool attach_cube;
         public bool detach_cube;
 
@@ -24,15 +25,17 @@ namespace RosMessageTypes.Ur10eRg2Moveit
             this.target_pose = new Geometry.PoseMsg();
             this.gripper_position = 0.0;
             this.cube_position = new Geometry.PointMsg();
+            this.distance_vectors = new Geometry.Vector3Msg[0];
             this.attach_cube = false;
             this.detach_cube = false;
         }
 
-        public HarvestPoseRequest(Geometry.PoseMsg target_pose, double gripper_position, Geometry.PointMsg cube_position, bool attach_cube, bool detach_cube)
+        public HarvestPoseRequest(Geometry.PoseMsg target_pose, double gripper_position, Geometry.PointMsg cube_position, Geometry.Vector3Msg[] distance_vectors, bool attach_cube, bool detach_cube)
         {
             this.target_pose = target_pose;
             this.gripper_position = gripper_position;
             this.cube_position = cube_position;
+            this.distance_vectors = distance_vectors;
             this.attach_cube = attach_cube;
             this.detach_cube = detach_cube;
         }
@@ -44,6 +47,7 @@ namespace RosMessageTypes.Ur10eRg2Moveit
             this.target_pose = Geometry.PoseMsg.Deserialize(deserializer);
             deserializer.Read(out this.gripper_position);
             this.cube_position = Geometry.PointMsg.Deserialize(deserializer);
+            deserializer.Read(out this.distance_vectors, Geometry.Vector3Msg.Deserialize, deserializer.ReadLength());
             deserializer.Read(out this.attach_cube);
             deserializer.Read(out this.detach_cube);
         }
@@ -53,6 +57,8 @@ namespace RosMessageTypes.Ur10eRg2Moveit
             serializer.Write(this.target_pose);
             serializer.Write(this.gripper_position);
             serializer.Write(this.cube_position);
+            serializer.WriteLength(this.distance_vectors);
+            serializer.Write(this.distance_vectors);
             serializer.Write(this.attach_cube);
             serializer.Write(this.detach_cube);
         }
@@ -63,6 +69,7 @@ namespace RosMessageTypes.Ur10eRg2Moveit
             "\ntarget_pose: " + target_pose.ToString() +
             "\ngripper_position: " + gripper_position.ToString() +
             "\ncube_position: " + cube_position.ToString() +
+            "\ndistance_vectors: " + System.String.Join(", ", distance_vectors.ToList()) +
             "\nattach_cube: " + attach_cube.ToString() +
             "\ndetach_cube: " + detach_cube.ToString();
         }

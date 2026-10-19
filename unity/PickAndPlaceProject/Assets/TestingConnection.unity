@@ -7248,7 +7248,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 850690186460591411, guid: 43bef545df3e344c4a7e089ca90c15a0, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.532
+      value: 0.566
       objectReference: {fileID: 0}
     - target: {fileID: 850690186460591411, guid: 43bef545df3e344c4a7e089ca90c15a0, type: 3}
       propertyPath: m_LocalPosition.y
@@ -7256,7 +7256,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 850690186460591411, guid: 43bef545df3e344c4a7e089ca90c15a0, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.581
+      value: 0.676
       objectReference: {fileID: 0}
     - target: {fileID: 850690186460591411, guid: 43bef545df3e344c4a7e089ca90c15a0, type: 3}
       propertyPath: m_LocalRotation.w
@@ -8281,7 +8281,7 @@ MonoBehaviour:
   placementTarget: {fileID: 1006382759}
   robotBase: {fileID: 1123158652}
   topDownGrasp: 0
-  graspYawDegrees: 45
+  graspYawDegrees: 90
   graspEuler: {x: 0, y: 0, z: 0}
   moveItFrameCorrectionEuler: {x: 0, y: 0, z: 0}
   graspHeightOffset: 0
@@ -8297,6 +8297,8 @@ MonoBehaviour:
   serviceTimeout: 15
   armSettleTime: 0.3
   gripAttachPoint: {fileID: 222883942}
+  robotLinkColliders: []
+  obstacleColliders: []
   driveStiffness: 100000
   driveDamping: 10000
   driveForceLimit: 10000
@@ -8936,7 +8938,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b6072e864c1f0bc46b9d1fea82a5a65c, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.869
+      value: 0.90299994
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b6072e864c1f0bc46b9d1fea82a5a65c, type: 3}
       propertyPath: m_LocalPosition.y
@@ -8944,7 +8946,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b6072e864c1f0bc46b9d1fea82a5a65c, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.531
+      value: 0.62600005
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: b6072e864c1f0bc46b9d1fea82a5a65c, type: 3}
       propertyPath: m_LocalRotation.w

@@ -4,10 +4,12 @@ import rospy
 import moveit_commander
 import sys
 import math
+import geometry_msgs.msg
 from moveit_msgs.msg import RobotState, PlanningScene, PlanningSceneComponents, AllowedCollisionEntry
 from moveit_msgs.srv import (GetPlanningScene, GetPlanningSceneRequest, ApplyPlanningScene,
                              GetStateValidity, GetStateValidityRequest)
 from ur10e_rg2_moveit.srv import HarvestPose, HarvestPoseResponse
+from moveit_msgs.msg import OrientationConstraint, Constraints 
 
 # Unity must send a gripper_position below this value to request a state reset
 # (e.g. -999). Normal finger angles (grip_open = -0.2284, grip_close = 0.7853)
@@ -82,6 +84,7 @@ class HarvestPoseServer:
         self.arm_group.set_max_velocity_scaling_factor(0.3)
         self.arm_group.set_max_acceleration_scaling_factor(0.3)
         self.scene = moveit_commander.PlanningSceneInterface()
+        self.add_obstacles()
 
         # Tracked state: Unity moves the arm, ROS never executes, so we remember
         # where the last planned trajectory ended.
@@ -93,6 +96,23 @@ class HarvestPoseServer:
             "harvest_pose", HarvestPose, self.handle_request
         )
         rospy.loginfo("HarvestPose service ready.")
+
+    def add_obstacles(self):
+        # Give MoveIt a second to initialize the planning scene connection
+        rospy.sleep(1.0) 
+        
+        cube_pose = geometry_msgs.msg.PoseStamped()
+        cube_pose.header.frame_id = self.arm_group.get_planning_frame()
+        
+        # Converted position (Relative distance from Robot Base to Cube)
+        cube_pose.pose.position.x = 0.067
+        cube_pose.pose.position.y = 0.479
+        cube_pose.pose.position.z = 0.273
+        cube_pose.pose.orientation.w = 1.0
+        
+        # Converted scale (Z, X, Y size)
+        self.scene.add_box("obstacle_cube", cube_pose, size=(0.269, 0.269, 0.557))
+        rospy.loginfo("Added obstacle_cube to the MoveIt planning scene.")    
 
     def make_tracked_start_state(self):
         """Current robot state, with the arm joints overridden by the tracked values."""
@@ -273,7 +293,26 @@ class HarvestPoseServer:
             )
             plan_success = True
         else:
-            rospy.logwarn("Straight line not possible (%.2f), falling back to RRTConnect.", fraction)
+            rospy.logwarn("Straight line not possible (%.2f), falling back to RRTConnect (Bi-RRT).", fraction)
+            
+            # --- NEW CODE: Add Orientation Constraint to Bi-RRT ---
+            constraints = Constraints()
+            oc = OrientationConstraint()
+            oc.header.frame_id = self.arm_group.get_planning_frame()
+            oc.link_name = self.arm_group.get_end_effector_link()
+            oc.orientation = req.target_pose.orientation
+            
+            # Tolerance in radians (0.1 rad is roughly 5.7 degrees of allowed wiggle room)
+            oc.absolute_x_axis_tolerance = 0.3
+            oc.absolute_y_axis_tolerance = 0.3
+            oc.absolute_z_axis_tolerance = 0.3
+            oc.weight = 1.0
+            constraints.orientation_constraints.append(oc)
+            
+            # Apply the constraint to the planner
+            self.arm_group.set_path_constraints(constraints)
+            # ------------------------------------------------------
+
             for attempt in (1, 2):
                 self.arm_group.set_pose_target(req.target_pose)
                 rospy.loginfo("Planning arm move (attempt %d)...", attempt)
@@ -283,6 +322,10 @@ class HarvestPoseServer:
                 if plan_success:
                     break
                 rospy.sleep(0.5)
+                
+            # --- NEW CODE: Clear constraints after planning ---
+            self.arm_group.clear_path_constraints()
+            # --------------------------------------------------
 
         if not plan_success:
             response.success = False

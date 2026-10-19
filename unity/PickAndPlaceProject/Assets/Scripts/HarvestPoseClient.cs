@@ -5,6 +5,7 @@ using RosMessageTypes.Ur10eRg2Moveit;
 using RosMessageTypes.Geometry;
 using Unity.Robotics.ROSTCPConnector;
 
+
 public class HarvestPoseClient : MonoBehaviour
 {
     ROSConnection ros;
@@ -23,7 +24,7 @@ public class HarvestPoseClient : MonoBehaviour
     [Tooltip("Point the tool straight down (approach from above). Recommended.")]
     public bool topDownGrasp = true;
     [Tooltip("Rotation about the vertical axis in degrees. Changes which way the RG2 fingers straddle the tomato/stem. Try 0 and 90.")]
-    public float graspYawDegrees = 45f;
+    public float graspYawDegrees = 90f;
     [Tooltip("Only used when Top Down Grasp is off. WORLD euler angles of tool0.")]
     public Vector3 graspEuler = Vector3.zero;
     [Tooltip("Rotation between Unity's tool0 and the frame MoveIt plans for. If the log says the approach axis is ~90 deg from straight down, try (90,0,0), (-90,0,0), (0,90,0), (0,-90,0)...")]
@@ -59,13 +60,20 @@ public class HarvestPoseClient : MonoBehaviour
 
     [Header("Timing")]
     [Tooltip("Seconds to wait for the ROS service before giving up on a step.")]
-    public float serviceTimeout = 30f;
+    public float serviceTimeout = 60f;
     [Tooltip("Seconds to let the arm settle after a trajectory finishes.")]
     public float armSettleTime = 0.3f;
 
     [Header("Grasping")]
     [Tooltip("Point on the gripper, between the fingertips, that held objects snap to and follow. Create an empty child under tool0 and position it there.")]
     public Transform gripAttachPoint;
+
+    [Header("Reinforcement Learning State")]
+    [Tooltip("Drag the colliders for the Base, Link 1, Link 2, etc., here in order.")]
+    public List<Collider> robotLinkColliders;
+    
+    [Tooltip("Drag the colliders of all dynamic obstacles here.")]
+    public List<Collider> obstacleColliders;
 
     Rigidbody grabbedRb;
     Transform grabbedOriginalParent;
@@ -501,6 +509,18 @@ public class HarvestPoseClient : MonoBehaviour
         );
         request.gripper_position = gripperPosition;
 
+        List<Vector3> unityDistances = GetDistanceVectors();
+        request.distance_vectors = new Vector3Msg[unityDistances.Count];
+        for (int i = 0; i < unityDistances.Count; i++)
+        {
+            // Note: Coordinate conversion (Z, -X, Y) matches your existing target_pose conversion logic
+            request.distance_vectors[i] = new Vector3Msg(
+                unityDistances[i].z, 
+                -unityDistances[i].x, 
+                unityDistances[i].y
+            );
+        }
+
         Debug.Log($"[{stepLabel}] Sending request... ROS pos=({localPos.z:F3}, {-localPos.x:F3}, {localPos.y:F3})");
 
         ros.SendServiceMessage<HarvestPoseResponse>(serviceName, request, (HarvestPoseResponse response) =>
@@ -545,12 +565,22 @@ public class HarvestPoseClient : MonoBehaviour
 
     void SetArmTargets(ArticulationBody[] cols, double[] from, double[] to, float a)
     {
+        // Adjust smoothingFactor between 0.05f (very smooth/laggy) and 1.0f (instant/rigid)
+        float smoothingFactor = 0.2f; 
+
         for (int i = 0; i < cols.Length && i < from.Length && i < to.Length; i++)
         {
             if (cols[i] == null) continue;
+            
             double rad = from[i] + (to[i] - from[i]) * a;
             var drive = cols[i].xDrive;
-            drive.target = (float)(rad * Mathf.Rad2Deg);
+            
+            // This line defines the variable so it exists in the current context
+            float commandedTarget = (float)(rad * Mathf.Rad2Deg);
+            
+            // Smoothly blend the current physical position toward the commanded target
+            drive.target = Mathf.Lerp(drive.target, commandedTarget, smoothingFactor);
+            
             cols[i].xDrive = drive;
         }
     }
@@ -619,5 +649,42 @@ public class HarvestPoseClient : MonoBehaviour
             if (finished) break;
             yield return null;
         }
+    }
+
+
+    public List<Vector3> GetDistanceVectors()
+    {
+        List<Vector3> distanceVectors = new List<Vector3>();
+
+        // i = 0 to n (Base, Link1, Link2...)
+        foreach (Collider linkCol in robotLinkColliders)
+        {
+            Vector3 shortestVector = Vector3.positiveInfinity;
+            float minDistance = float.MaxValue;
+
+            foreach (Collider obsCol in obstacleColliders)
+            {
+                // Find the closest point on the obstacle to the link's center
+                Vector3 closestPointOnObstacle = obsCol.ClosestPoint(linkCol.bounds.center);
+                
+                // Find the closest point on the link to that obstacle point
+                Vector3 closestPointOnLink = linkCol.ClosestPoint(closestPointOnObstacle);
+
+                // Calculate the directional distance vector (p_i)
+                Vector3 distanceVector = closestPointOnObstacle - closestPointOnLink;
+                float currentDistance = distanceVector.magnitude;
+
+                if (currentDistance < minDistance)
+                {
+                    minDistance = currentDistance;
+                    shortestVector = distanceVector;
+                }
+            }
+            
+            // Add the shortest vector found for this specific link
+            distanceVectors.Add(shortestVector);
+        }
+
+        return distanceVectors;
     }
 }
